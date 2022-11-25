@@ -195,32 +195,36 @@ const updatePassword = async (req: Request, res: Response) => {
 
   try {
     const [verificationCode, id] = split(code, 4);
-    
+
     const entry = await ResetPasswordCodes.findOne({
       where: { id }
     });
 
-    if(!entry || entry.code !== parseInt(verificationCode)) {
-      return res.status(401).send({message: "the verification code is not correct"});
+    if (!entry || entry.code !== parseInt(verificationCode)) {
+      return res.status(401).send({ message: "the verification code is not correct" });
     }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     const user = await User.update({
-      password: hashedPassword      
+      password: hashedPassword
     }, { where: { id: entry.userId } });
 
     await ResetPasswordCodes.destroy({
-      where: { id}
+      where: { id }
     });
 
-    return res.status(200).send({message: "Password is reset"})
+    return res.status(200).send({ message: "Password is reset" })
 
   } catch (error) {
-    return res.status(500).send({message: "Something went wrong"})
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
+
+    return res.status(500).send({ message: "Something went wrong" })
   }
-    
+
 }
 
 const userControllers = {
