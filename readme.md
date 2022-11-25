@@ -30,6 +30,8 @@ npx sequelize-cli db:migrate:undo --name file_name.js --env development --config
 PORT=8000
 ENVIRONMENT=development # development or production
 JWT_SECRET=ANY STRING
+MAILER=email to send verification code to user
+MAILER_PASSWORD=app specific password of the email
 ```
 
 <br />
