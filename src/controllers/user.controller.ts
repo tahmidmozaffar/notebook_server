@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { User } from "../models/user.model";
 import { ResetPasswordCodes } from "../models/resetpasswordcode";
 import sendEmail from "../services/mailer.service";
+import { split } from "../utils";
 
 const changePassword = async (req: Request, res: Response) => {
 
@@ -143,16 +144,19 @@ const resetPassword = async (req: Request, res: Response) => {
 
     if (user) {
 
-      const code = Math.floor(Math.random() * (10000 + 1));
-      await ResetPasswordCodes.create({
+      // create a random number between 1000 and 9999
+      const code = Math.floor(1000 + Math.random() * (9999 - 1000 + 1));
+
+      const codeEntry = await ResetPasswordCodes.create({
         userId: user.id!,
         code: code
       });
 
-      sendEmail(user.email!, code);
+      const verificationCode = code.toString() + codeEntry.id!.toString();
 
-      return res.status(200).send({message: "A verification code is sent to the account email."});
+      sendEmail(user.email!, verificationCode);
 
+      return res.status(200).send({ message: "A verification code is sent to the account email." });
     }
     else {
       return res.status(200).send({ message: "No user was found using this email" });
@@ -167,11 +171,64 @@ const resetPassword = async (req: Request, res: Response) => {
 
 }
 
+const updatePassword = async (req: Request, res: Response) => {
+
+  const code = req.body['code'];
+  const newPassword = req.body['newPassword'];
+  const confirmPassword = req.body['confirmPassword'];
+
+  if (!code) {
+    return res.status(422).send({ message: "Verification code is required" });
+  }
+
+  if (!newPassword) {
+    return res.status(422).send({
+      message: "New password is required"
+    });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(422).send({
+      message: "Password does not match"
+    });
+  }
+
+  try {
+    const [verificationCode, id] = split(code, 4);
+    
+    const entry = await ResetPasswordCodes.findOne({
+      where: { id }
+    });
+
+    if(!entry || entry.code !== parseInt(verificationCode)) {
+      return res.status(401).send({message: "the verification code is not correct"});
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    const user = await User.update({
+      password: hashedPassword      
+    }, { where: { id: entry.userId } });
+
+    await ResetPasswordCodes.destroy({
+      where: { id}
+    });
+
+    return res.status(200).send({message: "Password is reset"})
+
+  } catch (error) {
+    return res.status(500).send({message: "Something went wrong"})
+  }
+    
+}
+
 const userControllers = {
   changePassword,
-  resetPassword,
   updateProfile,
   deleteProfile,
+  resetPassword,
+  updatePassword,
 };
 
 export default userControllers;

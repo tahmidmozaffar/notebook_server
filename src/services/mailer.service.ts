@@ -10,7 +10,7 @@ const mailSender = nodeMailer.createTransport({
   secure: true
 });
 
-export const sendEmail = (toEmail: string, verificationCode: number) => {
+export const sendEmail = (toEmail: string, verificationCode: string) => {
 
   const mailData = {
     from: process.env.MAILER,

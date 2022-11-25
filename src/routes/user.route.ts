@@ -5,6 +5,7 @@ import userControllers from '../controllers/user.controller';
 const router = express.Router();
 
 router.post('/resetpassword', userControllers.resetPassword);
+router.put('/resetpassword', userControllers.updatePassword);
 router.post('/changepassword', passport.authenticate('jwt', { session: false }), userControllers.changePassword);
 router.put('/', passport.authenticate('jwt', { session: false }), userControllers.updateProfile);
 router.delete('/', passport.authenticate('jwt', { session: false }), userControllers.deleteProfile);
