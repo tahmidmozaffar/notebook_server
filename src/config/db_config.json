@@ -13,6 +13,8 @@
     "database": "",
     "host": "",
     "port": 5432,
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "ssl": true,
+    "native": true
   }
 }
