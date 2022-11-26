@@ -28,8 +28,7 @@
     "pg": "^8.8.0",
     "pg-hstore": "^2.3.4",
     "pg-native": "^3.0.1",
-    "sequelize": "^6.25.3",
-    "typescript": "^4.8.4"
+    "sequelize": "^6.25.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
@@ -40,6 +39,7 @@
     "@types/passport-http": "^0.3.9",
     "@types/passport-jwt": "^3.0.7",
     "concurrently": "^7.5.0",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "typescript": "^4.8.4"
   }
 }
