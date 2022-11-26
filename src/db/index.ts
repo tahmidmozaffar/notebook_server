@@ -1,15 +1,14 @@
-import dbConfig from "../config/db.config";
-import { Sequelize } from "sequelize";
+import { Dialect, Sequelize } from "sequelize";
 
-export const sequelize = new Sequelize(dbConfig.DB!, dbConfig.USER!, dbConfig.PASSWORD!, {
-  host: dbConfig.HOST,
-  port: dbConfig.PORT,
-  dialect: dbConfig.dialect,
+export const sequelize = new Sequelize(process.env.DB_NAME!, process.env.DB_USERNAME!, process.env.DB_PASSWORD!, {
+  host: process.env.DB_HOST!,
+  port: parseInt(process.env.DB_PORT!),
+  dialect: process.env.DB_DIALECT as Dialect,
   pool: {
-    max: dbConfig.pool.max,
-    min: dbConfig.pool.min,
-    acquire: dbConfig.pool.acquire,
-    idle: dbConfig.pool.idle
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000
   },
   logging: process.env.ENVIRONMENT === 'DEVELOPMENT'
 });
