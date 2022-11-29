@@ -12,24 +12,6 @@ const signup = async (req: Request, res: Response) => {
   const password = req.body['password'];
   const email = req.body['email'];
 
-  if (!name) {
-    return res.status(422).send({
-      message: "Name is required"
-    });
-  }
-
-  if (!username) {
-    return res.status(422).send({
-      message: "Username is required"
-    });
-  }
-
-  if (!password) {
-    return res.status(422).send({
-      message: "Password is required"
-    });
-  }
-
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -52,18 +34,6 @@ const login = async (req: Request, res: Response) => {
 
   const username = req.body['username'];
   const password = req.body['password'];
-
-  if (!username) {
-    return res.status(422).send({
-      message: "Username is required"
-    });
-  }
-
-  if (!password) {
-    return res.status(422).send({
-      message: "Password is required"
-    });
-  }
 
   try {
     const user = await User.findOne({ where: { username } });
