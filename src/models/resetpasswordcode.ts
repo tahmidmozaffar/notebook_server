@@ -1,10 +1,10 @@
-import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes, Sequelize } from 'sequelize';
+import { Model, InferAttributes, InferCreationAttributes, DataTypes } from 'sequelize';
 import { sequelize } from '../db';
 
 export class ResetPasswordCodes extends Model<InferAttributes<ResetPasswordCodes>, InferCreationAttributes<ResetPasswordCodes>> {
   declare id?: string;
   declare userId: number;
-  declare code: number;  
+  declare code: number;
 };
 
 ResetPasswordCodes.init({
@@ -17,8 +17,8 @@ ResetPasswordCodes.init({
     type: DataTypes.INTEGER,
   },
   code: {
-    type: DataTypes.INTEGER,  
-  },  
+    type: DataTypes.INTEGER,
+  },
 }, {
   tableName: 'resetpasswordcodes',
   sequelize,

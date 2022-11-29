@@ -1,11 +1,13 @@
-import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes, Sequelize } from 'sequelize';
+import { Model, InferAttributes, InferCreationAttributes, DataTypes } from 'sequelize';
 import { sequelize } from '../db';
+import { Note } from './note.model';
+import { ResetPasswordCodes } from './resetpasswordcode';
 
 export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id?: number;
   declare name: string;
   declare username: string;
-  declare password: string; 
+  declare password: string;
   declare email?: string;
 };
 
@@ -36,3 +38,9 @@ User.init({
   tableName: 'users',
   sequelize,
 });
+
+User.hasMany(Note, { foreignKey: "userId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Note.belongsTo(User);
+
+User.hasOne(ResetPasswordCodes, { foreignKey: "userId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+ResetPasswordCodes.belongsTo(User);

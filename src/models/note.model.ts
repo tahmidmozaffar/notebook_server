@@ -1,8 +1,9 @@
-import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes, Sequelize } from 'sequelize';
+import { Model, InferAttributes, InferCreationAttributes, DataTypes } from 'sequelize';
 import { sequelize } from '../db';
 
 export class Note extends Model<InferAttributes<Note>, InferCreationAttributes<Note>> {
   declare id?: number;
+  declare userId: number;
   declare title: string;
   declare description: string;
   declare tasks?: Object[];
@@ -14,6 +15,10 @@ Note.init({
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,    
   },
   title: {
     allowNull: false,

@@ -24,6 +24,16 @@ module.exports = {
       isDeleted: {
         type: Sequelize.INTEGER
       },
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: {
+            tableName: 'users',
+          },
+          key: 'id',          
+        }  
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
