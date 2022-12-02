@@ -1,7 +1,7 @@
 import { Model, InferAttributes, InferCreationAttributes, DataTypes } from 'sequelize';
 import { sequelize } from '../db';
 import { Note } from './note.model';
-import { ResetPasswordCodes } from './resetpasswordcode';
+import { ResetPasswordCodes } from './resetpasswordcode.model';
 
 export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id?: number;
@@ -40,7 +40,7 @@ User.init({
 });
 
 User.hasMany(Note, { foreignKey: "userId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
-Note.belongsTo(User);
+Note.belongsTo(User, { foreignKey: "userId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
 User.hasOne(ResetPasswordCodes, { foreignKey: "userId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
-ResetPasswordCodes.belongsTo(User);
+ResetPasswordCodes.belongsTo(User, { foreignKey: "userId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });

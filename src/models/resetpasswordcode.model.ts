@@ -1,5 +1,7 @@
 import { Model, InferAttributes, InferCreationAttributes, DataTypes } from 'sequelize';
 import { sequelize } from '../db';
+import { User } from './user.model';
+
 
 export class ResetPasswordCodes extends Model<InferAttributes<ResetPasswordCodes>, InferCreationAttributes<ResetPasswordCodes>> {
   declare id?: string;

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { User } from "../models/user.model";
-import { ResetPasswordCodes } from "../models/resetpasswordcode";
+import { ResetPasswordCodes } from "../models/resetpasswordcode.model";
 import sendEmail from "../services/mailer.service";
 import { split } from "../utils";
 
@@ -10,25 +10,6 @@ const changePassword = async (req: Request, res: Response) => {
 
   const currentPassword = req.body['currentPassword'];
   const newPassword = req.body['newPassword'];
-  const confirmPassword = req.body['confirmPassword'];
-
-  if (!currentPassword) {
-    return res.status(422).send({
-      message: "Current password is required"
-    });
-  }
-
-  if (!newPassword) {
-    return res.status(422).send({
-      message: "New password is required"
-    });
-  }
-
-  if (newPassword !== confirmPassword) {
-    return res.status(422).send({
-      message: "Password does not match"
-    });
-  }
 
   const token = req.headers.authorization!.split(" ")[1];
   const jwtPayload = jwt.decode(token, { json: true });
@@ -115,7 +96,14 @@ const deleteProfile = async (req: Request, res: Response) => {
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
-    await User.destroy({
+    
+    // need to improve this. 
+    // deleting user should works without deleting ResetPasswordCodes entry first
+    await ResetPasswordCodes.destroy({
+      where: {userId: jwtPayload?.id}
+    });
+
+    await User.destroy({      
       where: { id: jwtPayload?.id }
     });
 
@@ -133,10 +121,6 @@ const resetPassword = async (req: Request, res: Response) => {
 
   const email = req.body['email'];
 
-  if (!email) {
-    return res.status(422).send({ message: "Email is required" });
-  }
-
   try {
     const user = await User.findOne({
       where: { email }
@@ -151,6 +135,8 @@ const resetPassword = async (req: Request, res: Response) => {
         userId: user.id!,
         code: code
       });
+
+      console.log(codeEntry);
 
       const verificationCode = code.toString() + codeEntry.id!.toString();
 
