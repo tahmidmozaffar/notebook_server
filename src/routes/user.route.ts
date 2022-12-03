@@ -6,7 +6,11 @@ import { fieldValidation, confirmPasswordValidation, emailValidation } from '../
 const router = express.Router();
 
 router.post('/resetpassword', emailValidation, userControllers.resetPassword);
-router.put('/resetpassword', userControllers.updatePassword);
+router.put('/resetpassword', 
+  fieldValidation('newPassword'),
+  fieldValidation('confirmPassword'), 
+  confirmPasswordValidation,
+  userControllers.updatePassword);
 
 
 router.post('/changepassword', passport.authenticate('jwt', { session: false }),

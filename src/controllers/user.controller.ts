@@ -167,18 +167,6 @@ const updatePassword = async (req: Request, res: Response) => {
     return res.status(422).send({ message: "Verification code is required" });
   }
 
-  if (!newPassword) {
-    return res.status(422).send({
-      message: "New password is required"
-    });
-  }
-
-  if (newPassword !== confirmPassword) {
-    return res.status(422).send({
-      message: "Password does not match"
-    });
-  }
-
   try {
     const [verificationCode, id] = split(code, 4);
 
