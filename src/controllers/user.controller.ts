@@ -161,7 +161,6 @@ const updatePassword = async (req: Request, res: Response) => {
 
   const code = req.body['code'];
   const newPassword = req.body['newPassword'];
-  const confirmPassword = req.body['confirmPassword'];
 
   if (!code) {
     return res.status(422).send({ message: "Verification code is required" });

@@ -10,6 +10,9 @@ router.post('/signup',
   fieldValidation('password'),
   authControllers.signup);
 
-router.post('/login', fieldValidation('username'), fieldValidation('password'), authControllers.login);
+router.post('/login', 
+  fieldValidation('username'), 
+  fieldValidation('password'), 
+  authControllers.login);
 
 export default router;
