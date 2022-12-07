@@ -131,7 +131,12 @@ const deleteNote = (req: Request, res: Response) => {
 
   Note.update({
     isDeleted: 1
-  }, { where: { userId: jwtPayload?.id, id } }).then(data => res.send({ message: "Note is successfully deleted" }))
+  }, { where: { userId: jwtPayload?.id, id } }).then(data => {
+    if (data[0] === 0)
+      return res.status(401).send({ message: "Note is not found" })
+
+    return res.status(200).send({ message: "Note is successfully deleted" })
+  })
     .catch(err => res.status(500).send({ message: err.message }));
 }
 
@@ -143,7 +148,12 @@ const undoDeleteNote = (req: Request, res: Response) => {
 
   Note.update({
     isDeleted: 0
-  }, { where: { userId: jwtPayload?.id, id } }).then(data => res.send({ message: "Note is successfully restored" }))
+  }, { where: { userId: jwtPayload?.id, id } }).then(data => {
+    if (data[0] === 0)
+      return res.status(401).send({ message: "Note is not found" });
+
+    return res.status(200).send({ message: "Note is successfully restored" })
+  })
     .catch(err => res.status(500).send({ message: err.message }));
 }
 
