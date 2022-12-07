@@ -96,13 +96,6 @@ const deleteProfile = async (req: Request, res: Response) => {
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
-    
-    // need to improve this. 
-    // deleting user should works without deleting ResetPasswordCodes entry first
-    await ResetPasswordCodes.destroy({
-      where: {userId: jwtPayload?.id}
-    });
-
     await User.destroy({      
       where: { id: jwtPayload?.id }
     });

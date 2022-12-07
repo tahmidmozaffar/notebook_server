@@ -32,7 +32,9 @@ module.exports = {
             tableName: 'users',
           },
           key: 'id',          
-        }  
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,
