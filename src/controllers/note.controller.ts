@@ -1,41 +1,40 @@
 import { Request, Response } from "express";
 import { Note } from "../models/note.model";
 import jwt from 'jsonwebtoken';
+import noteServices from "../services/note.service";
 
-const getNotes = (req: Request, res: Response) => {
+const getNotes = async (req: Request, res: Response) => {
 
   const token = req.headers.authorization!.split(" ")[1];
   const jwtPayload = jwt.decode(token, { json: true });
 
-  Note.findAll({
-    where: {
-      userId: jwtPayload?.id
-    }
-  })
-    .then(data => res.send(data))
-    .catch(err => res.status(500).send({ message: err.message }));
+  try {
+    const notes = await noteServices.getNotes(jwtPayload?.id);
+    return res.status(200).send(notes);
+  } catch (error) {
+    return res.status(500).send({ message: "Something went wrong. Could not retrive notes" });
+  }
+
 }
 
-const getNote = (req: Request, res: Response) => {
+const getNote = async (req: Request, res: Response) => {
   const id = req.params['id'];
   const token = req.headers.authorization!.split(" ")[1];
   const jwtPayload = jwt.decode(token, { json: true });
 
-  Note.findOne({
-    where: {
-      userId: jwtPayload?.id,
-      id
-    }
-  }).then(data => {
-    if (data) {
-      return res.send(data)
+
+  try {
+    const note = await noteServices.getNote(jwtPayload?.id, id);
+
+    if (note) {
+      return res.status(200).send(note);
     }
     else {
-      return res.status(404).send({ message: "Note is not found" });
+      return res.status(404).send({ message: "Note is not found" })
     }
-  })
-    .catch(err => res.status(500).send({ message: err.message }));
-
+  } catch (error) {
+    return res.status(500).send({ message: "Something went wrong. Could not retrive the note" });
+  }
 }
 
 const postNote = (req: Request, res: Response) => {
