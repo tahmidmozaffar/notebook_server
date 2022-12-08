@@ -116,8 +116,18 @@ const updateNote = async (userId: string, id: string, title: string, description
   }
 }
 
-const deleteNote = () => {
+const deleteNote = async (userId: string, id: string) => {
+  try {
+    const data = await Note.update({ isDeleted: 1 }, {
+      where: {
+        userId, id
+      }
+    });
+    return data;
 
+  } catch (error) {
+    throw error;
+  }
 }
 
 const undoDeleteNote = () => {

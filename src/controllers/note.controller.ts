@@ -87,11 +87,12 @@ const updateNote = async (req: Request, res: Response) => {
 
   try {
     const note = await noteServices.updateNote(jwtPayload?.id, id, title, description, tasksJson);
-    if (note) {
-      return res.status(200).send(note);
+
+    if (note?.[0] === 0) {
+      return res.status(500).send({ message: "Something went wrong. Could not update the note." });
     }
     else {
-      return res.status(500).send({ message: "Something went wrong. Could not update the note." });
+      return res.status(200).send(note);
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -110,21 +111,23 @@ const updateNote = async (req: Request, res: Response) => {
   }
 }
 
-const deleteNote = (req: Request, res: Response) => {
+const deleteNote = async (req: Request, res: Response) => {
 
   const id = req.params['id'];
   const token = req.headers.authorization!.split(" ")[1];
   const jwtPayload = jwt.decode(token, { json: true });
 
-  Note.update({
-    isDeleted: 1
-  }, { where: { userId: jwtPayload?.id, id } }).then(data => {
-    if (data[0] === 0)
-      return res.status(401).send({ message: "Note is not found" })
+  try {
+    const data = await noteServices.deleteNote(jwtPayload?.id, id);
 
-    return res.status(200).send({ message: "Note is successfully deleted" })
-  })
-    .catch(err => res.status(500).send({ message: err.message }));
+    if (data[0] === 0) {
+      return res.status(401).send({ message: "Note is not found" });
+    }
+
+    return res.status(200).send({ message: "Note is successfully deleted." });
+  } catch (error) {
+    res.status(500).send({ message: "Something went wrong. Could not delete the note." })
+  }
 }
 
 const undoDeleteNote = (req: Request, res: Response) => {
