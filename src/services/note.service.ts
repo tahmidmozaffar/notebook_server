@@ -32,7 +32,31 @@ const getNote = async (userId: string, id: string) => {
   }
 }
 
-const postNote = () => {
+const addNote = async (userId: number, title: string, description: string, tasksJson: string) => {
+  let tasks;
+  try {
+    if (tasksJson != null) {
+      tasks = JSON.parse(tasksJson);
+    }
+  } catch (e) {
+    if (e instanceof Error) {
+      e.name = "JSONException"
+    }
+    throw e;
+  }
+
+  try {
+    const note = await Note.create({
+      title, userId, description, tasks, isDeleted: 0
+    });
+
+    return note;
+  } catch (e) {
+    if (e instanceof Error) {
+      e.name = "DatabaseException"
+    }
+    throw e;
+  }
 
 }
 
@@ -51,7 +75,7 @@ const undoDeleteNote = () => {
 const noteServices = {
   getNotes,
   getNote,
-  postNote,
+  addNote,
   updateNote,
   deleteNote,
   undoDeleteNote,

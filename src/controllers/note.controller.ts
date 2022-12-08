@@ -33,34 +33,39 @@ const getNote = async (req: Request, res: Response) => {
       return res.status(404).send({ message: "Note is not found" })
     }
   } catch (error) {
-    return res.status(500).send({ message: "Something went wrong. Could not retrive the note" });
+    return res.status(500).send({ message: "Something went wrong. Could not retrive the note." });
   }
 }
 
-const postNote = (req: Request, res: Response) => {
+const postNote = async (req: Request, res: Response) => {
 
   const token = req.headers.authorization!.split(" ")[1];
   const jwtPayload = jwt.decode(token, { json: true });
 
   const title = req.body['title'];
   const description = req.body['description'];
-  let tasks;
+  const tasksJson = req.body['tasks']
 
   try {
-    const param = req.body['tasks']
-    if (param != null) {
-      tasks = JSON.parse(req.body['tasks']);
-    }
-  } catch (e) {
-    if (e instanceof Error) {
-      console.log(e.message);
-    }
-    return res.status(422).send({ exception: "InvalidArgumentException", message: "tasks must be a valid JSON array" });
-  }
+    const note = await noteServices.addNote(jwtPayload?.id, title, description, tasksJson);
 
-  Note.create({ title, userId: jwtPayload?.id, description, tasks, isDeleted: 0 })
-    .then(data => res.send(data))
-    .catch(err => res.status(500).send({ message: err.message }));
+    if (note) {
+      return res.status(200).send(note);
+    }
+    else {
+      return res.status(500).send({ message: "Something went wrong. Could not add the note." });
+    }
+  }
+  catch (e) {
+    if (e instanceof Error) {
+      switch (e.name) {
+        case "JSONException":
+          return res.status(422).send({ exception: "InvalidArgumentException", message: "Tasks must be a valid JSON array" });
+        case "DatabaseException":
+          return res.status(500).send({ mesage: "Something went wrong. Could not add the note." })
+      }
+    }
+  }
 }
 
 const updateNote = async (req: Request, res: Response) => {
