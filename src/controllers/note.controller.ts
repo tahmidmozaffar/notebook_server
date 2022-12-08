@@ -44,7 +44,7 @@ const postNote = async (req: Request, res: Response) => {
 
   const title = req.body['title'];
   const description = req.body['description'];
-  const tasksJson = req.body['tasks']
+  const tasksJson = req.body['tasks'];
 
   try {
     const note = await noteServices.addNote(jwtPayload?.id, title, description, tasksJson);
@@ -58,13 +58,16 @@ const postNote = async (req: Request, res: Response) => {
   }
   catch (e) {
     if (e instanceof Error) {
-      switch (e.name) {
-        case "JSONException":
-          return res.status(422).send({ exception: "InvalidArgumentException", message: "Tasks must be a valid JSON array" });
-        case "DatabaseException":
-          return res.status(500).send({ mesage: "Something went wrong. Could not add the note." })
+      if (e.name) {
+        switch (e.name) {
+          case "JSONException":
+            return res.status(422).send({ exception: "InvalidArgumentException", message: "Tasks must be a valid JSON array" });
+          case "DatabaseException":
+            return res.status(500).send({ mesage: "Something went wrong. Could not add the note." });
+        }
       }
     }
+    return res.status(500).send({ message: "Something went wrong." });
   }
 }
 
@@ -74,57 +77,37 @@ const updateNote = async (req: Request, res: Response) => {
   const token = req.headers.authorization!.split(" ")[1];
   const jwtPayload = jwt.decode(token, { json: true });
 
-  let existingData;
+  const title = req.body['title'];
+  const description = req.body['description'];
+  const tasksJson = req.body['tasks'];
+
+  if (!title && !description && !tasksJson) {
+    return res.status(422).send({ exception: "InvalidArgumentException", message: "There is nothing to update" });
+  }
+
   try {
-    const data = await Note.findOne({
-      where: {
-        userId: jwtPayload?.id,
-        id
+    const note = await noteServices.updateNote(jwtPayload?.id, id, title, description, tasksJson);
+    if (note) {
+      return res.status(200).send(note);
+    }
+    else {
+      return res.status(500).send({ message: "Something went wrong. Could not update the note." });
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.name) {
+        switch (error.name) {
+          case "NoteNotFoundException":
+            return res.status(404).send({ message: "No note was found using the id" });
+          case "JSONException":
+            return res.status(422).send({ exception: "InvalidArgumentException", message: "Tasks must be a valid JSON array" });
+          case "DatabaseException":
+            return res.status(500).send({ mesage: "Something went wrong. Could not update the note." });
+        }
       }
-    });
-
-    if (data) {
-      existingData = data;
-    } else {
-      return res.status(404).send({ message: "There is no Note by this id" });
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      console.log(err.message);
-    }
-    return res.status(500).send({ message: "Could not complete the request" });
+    return res.status(500).send({ message: "Something went wrong." });
   }
-
-  const req_title = req.body['title'];
-  const req_description = req.body['description'];
-  const req_tasks = req.body['tasks'];
-
-  if (!req_title && !req_description && !req_tasks) {
-    res.status(422).send({ exception: "InvalidArgumentException", message: "There is nothing to update" });
-  }
-
-  let tasks;
-  try {
-    if (req_tasks != null) {
-      tasks = JSON.parse(req.body['tasks']);
-    }
-  } catch (e) {
-    if (e instanceof Error) {
-      console.log(e.message);
-    }
-    return res.status(422).send({ exception: "InvalidArgumentException", message: "tasks must be a valid JSON array" });
-  }
-
-  const title = req_title || existingData?.['title'];
-  const description = req_description || existingData?.['description'];
-
-  Note.update({
-    title,
-    description,
-    tasks
-  }, { where: { id } }).then(data => res.send({ message: "Note is successfully updated" }))
-    .catch(err => res.status(500).send({ message: err.message }));
-
 }
 
 const deleteNote = (req: Request, res: Response) => {

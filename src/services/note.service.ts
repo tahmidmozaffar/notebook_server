@@ -1,3 +1,4 @@
+import e from "express";
 import { Note } from "../models/note.model"
 
 const getNotes = async (userId: string) => {
@@ -28,7 +29,7 @@ const getNote = async (userId: string, id: string) => {
     return note;
   } catch (error) {
     // TODO: log error
-    throw error
+    throw error;
   }
 }
 
@@ -40,7 +41,7 @@ const addNote = async (userId: number, title: string, description: string, tasks
     }
   } catch (e) {
     if (e instanceof Error) {
-      e.name = "JSONException"
+      e.name = "JSONException";
     }
     throw e;
   }
@@ -53,15 +54,66 @@ const addNote = async (userId: number, title: string, description: string, tasks
     return note;
   } catch (e) {
     if (e instanceof Error) {
-      e.name = "DatabaseException"
+      e.name = "DatabaseException";
     }
     throw e;
   }
 
 }
 
-const updateNote = () => {
+const updateNote = async (userId: string, id: string, title: string, description: string, tasksJson: string) => {
 
+  let existingData;
+  try {
+    const data = await Note.findOne({
+      where: {
+        userId,
+        id
+      }
+    });
+    if (data) {
+      existingData = data;
+    }
+    else {
+      const error = new Error();
+      error.name = "NoteNotFoundException"
+      throw error;
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      if (!error.name) {
+        error.name = "DatabaseException"
+      }
+      throw error;
+    }
+  }
+
+  let tasks;
+  try {
+    if (tasksJson != null) {
+      tasks = JSON.parse(tasksJson);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      error.name = "JSONException";
+    }
+    throw error;
+  }
+
+  const updatedTitle = title || existingData?.['title'];
+  const updatedDescription = description || existingData?.['description'];
+
+  try {
+    const note = await Note.update({
+      title: updatedTitle, description: updatedDescription, tasks
+    }, { where: { id } });
+    return note;
+  } catch (error) {
+    if (error instanceof Error) {
+      error.name = "DatabaseException"
+      throw error;
+    }
+  }
 }
 
 const deleteNote = () => {
