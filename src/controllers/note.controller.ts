@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { Note } from "../models/note.model";
 import jwt from 'jsonwebtoken';
 import noteServices from "../services/note.service";
 
@@ -130,21 +129,24 @@ const deleteNote = async (req: Request, res: Response) => {
   }
 }
 
-const undoDeleteNote = (req: Request, res: Response) => {
+const undoDeleteNote = async (req: Request, res: Response) => {
 
   const id = req.params['id'];
   const token = req.headers.authorization!.split(" ")[1];
   const jwtPayload = jwt.decode(token, { json: true });
 
-  Note.update({
-    isDeleted: 0
-  }, { where: { userId: jwtPayload?.id, id } }).then(data => {
-    if (data[0] === 0)
-      return res.status(401).send({ message: "Note is not found" });
+  try {
+    const data = await noteServices.undoDeleteNote(jwtPayload?.id, id);
 
-    return res.status(200).send({ message: "Note is successfully restored" })
-  })
-    .catch(err => res.status(500).send({ message: err.message }));
+    if (data[0] === 0) {
+      return res.status(401).send({ message: "Note is not found" });
+    }
+
+    return res.status(200).send({ message: "Note is successfully restored." });
+  } catch (error) {
+    res.status(500).send({ message: "Something went wrong. Could not restore the note." })
+  }
+
 }
 
 const noteControllers = {

@@ -1,4 +1,3 @@
-import e from "express";
 import { Note } from "../models/note.model"
 
 const getNotes = async (userId: string) => {
@@ -130,8 +129,19 @@ const deleteNote = async (userId: string, id: string) => {
   }
 }
 
-const undoDeleteNote = () => {
+const undoDeleteNote = async (userId: string, id: string) => {
 
+  try {
+    const data = await Note.update({ isDeleted: 0 }, {
+      where: {
+        userId, id
+      }
+    });
+    return data;
+
+  } catch (error) {
+    throw error;
+  }
 }
 
 const noteServices = {
