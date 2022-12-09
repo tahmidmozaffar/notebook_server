@@ -5,6 +5,7 @@ import { User } from "../models/user.model";
 import { ResetPasswordCodes } from "../models/resetpasswordcode.model";
 import sendEmail from "../services/mailer.service";
 import { split } from "../utils";
+import userService from "../services/user.service";
 
 const changePassword = async (req: Request, res: Response) => {
 
@@ -15,7 +16,7 @@ const changePassword = async (req: Request, res: Response) => {
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
-    const user = await User.findOne({ where: { id: jwtPayload?.id } });
+    const user = await userService.getUserByUserId(jwtPayload?.id)
 
     if (user) {
       const isMatched = await bcrypt.compare(currentPassword, user.password);
@@ -25,12 +26,11 @@ const changePassword = async (req: Request, res: Response) => {
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
         try {
-          await User.update({
-            name: user.name,
-            username: user.username,
-            password: hashedPassword,
-            email: user.email,
-          }, { where: { id: user.id } });
+          const data = await userService.updatePassword(user.id, hashedPassword);
+
+          if (data[0] === 0) {
+            return res.status(404).json({ message: "Something went worng. Could not change the password" });
+          }
 
           return res.status(200).json({ message: "Password is changed" });
         } catch (err) {
@@ -96,7 +96,7 @@ const deleteProfile = async (req: Request, res: Response) => {
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
-    await User.destroy({      
+    await User.destroy({
       where: { id: jwtPayload?.id }
     });
 

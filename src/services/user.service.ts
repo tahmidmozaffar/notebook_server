@@ -31,9 +31,32 @@ const getUserByUsername = async (username: string) => {
 
 }
 
-const authService = {
-  createUser,
-  getUserByUsername,
+const getUserByUserId = async (id: string) => {
+  try {
+    const user = await User.findOne({ where: { id } });
+    return user;
+  } catch (error) {
+    throw error;
+  }
 }
 
-export default authService;
+const updatePassword = async (id: number | undefined, hashedPassword: string) => {
+  try {
+    const data = await User.update({
+      password: hashedPassword,
+    }, { where: { id } });
+    
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const userService = {
+  createUser,
+  getUserByUsername,
+  getUserByUserId,
+  updatePassword,
+}
+
+export default userService;
