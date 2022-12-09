@@ -1,0 +1,39 @@
+import bcrypt from 'bcrypt';
+import { User } from "../models/user.model";
+
+const createUser = async (name: string, username: string, password: string, email: string) => {
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  try {
+    const user = await User.create({
+      name, username, password: hashedPassword, email
+    });
+    return user;
+  }
+  catch (error) {
+    throw error;
+  }
+}
+
+const getUserByUsername = async (username: string) => {
+
+  try {
+    const user = await User.findOne({ where: { username } });
+    return user;
+  } catch (error) {
+    if (error instanceof Error) {
+      error.name = "DatabaseException";
+    }
+    throw error;
+  }
+
+}
+
+const authService = {
+  createUser,
+  getUserByUsername,
+}
+
+export default authService;
