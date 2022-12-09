@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import { User } from "../models/user.model";
 import bcrypt from 'bcrypt';
+import authService from "../services/auth.service";
 
 const jwt_secret = process.env.JWT_SECRET!;
-
 
 const signup = async (req: Request, res: Response) => {
   const name = req.body['name'];
@@ -12,22 +12,13 @@ const signup = async (req: Request, res: Response) => {
   const password = req.body['password'];
   const email = req.body['email'];
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
   try {
-    await User.create({
-      name, username, password: hashedPassword, email
-    });
+    await authService.createUser(name, username, password, email);
     return res.status(201).send("User is created successfully");
-  }
-  catch (error) {
-    if (error instanceof Error) {
-      console.log(error.message);
-    }
+
+  } catch (error) {
     return res.status(500).send({ message: "Something went wrong. Please try again." });
   }
-
 }
 
 const login = async (req: Request, res: Response) => {
