@@ -26,7 +26,7 @@ const changePassword = async (req: Request, res: Response) => {
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
         try {
-          const data = await userService.updatePassword(user.id, hashedPassword);
+          const data = await userService.updatePassword(jwtPayload?.id, hashedPassword);
 
           if (data[0] === 0) {
             return res.status(404).json({ message: "Something went worng. Could not change the password" });
@@ -66,14 +66,16 @@ const updateProfile = async (req: Request, res: Response) => {
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
-    const user = await User.findOne({ where: { id: jwtPayload?.id } });
+
+    const user = await userService.getUserByUserId(jwtPayload?.id);
 
     if (user) {
       if (name || email) {
-        User.update({
-          name: name ?? user.name,
-          email: email ?? user.email
-        }, { where: { id: user.id } });
+        const data = await userService.updateProfile(jwtPayload?.id, name ?? user.name, email ?? user.email)
+
+        if (data[0] === 0) {
+          return res.status(200).send({ message: "Something went wrong. Could not update the profile information" });
+        }
 
         return res.status(200).send({ message: "Profile is updated" });
       }

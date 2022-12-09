@@ -40,12 +40,25 @@ const getUserByUserId = async (id: string) => {
   }
 }
 
-const updatePassword = async (id: number | undefined, hashedPassword: string) => {
+const updatePassword = async (id: string, hashedPassword: string) => {
   try {
     const data = await User.update({
       password: hashedPassword,
     }, { where: { id } });
-    
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const updateProfile = async (id: string, name: string, email: string) => {
+  try {
+    const data = await User.update({
+      name,
+      email
+    }, { where: { id } });
+
     return data;
   } catch (error) {
     throw error;
@@ -57,6 +70,7 @@ const userService = {
   getUserByUsername,
   getUserByUserId,
   updatePassword,
+  updateProfile,
 }
 
 export default userService;
