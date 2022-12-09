@@ -71,10 +71,10 @@ const updateProfile = async (req: Request, res: Response) => {
 
     if (user) {
       if (name || email) {
-        const data = await userService.updateProfile(jwtPayload?.id, name ?? user.name, email ?? user.email)
+        const data = await userService.updateUser(jwtPayload?.id, name ?? user.name, email ?? user.email)
 
         if (data[0] === 0) {
-          return res.status(200).send({ message: "Something went wrong. Could not update the profile information" });
+          return res.status(404).send({ message: "Something went wrong. Could not update the profile information" });
         }
 
         return res.status(200).send({ message: "Profile is updated" });
@@ -98,11 +98,13 @@ const deleteProfile = async (req: Request, res: Response) => {
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
-    await User.destroy({
-      where: { id: jwtPayload?.id }
-    });
+    const data = await userService.deleteUser(jwtPayload?.id);
 
-    return res.status(200).send({ message: "User account is deleted", devMessage: "Redirect user to login page" });
+    if (data > 0) {
+      return res.status(200).send({ message: "User account is deleted", devMessage: "Redirect user to login page" });
+    }
+
+    return res.status(404).send({ message: "Something went wrong. Could not find the user." });
   } catch (error) {
     if (error instanceof Error) {
       console.log(error.message);

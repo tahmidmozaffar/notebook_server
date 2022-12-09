@@ -52,7 +52,7 @@ const updatePassword = async (id: string, hashedPassword: string) => {
   }
 }
 
-const updateProfile = async (id: string, name: string, email: string) => {
+const updateUser = async (id: string, name: string, email: string) => {
   try {
     const data = await User.update({
       name,
@@ -65,12 +65,27 @@ const updateProfile = async (id: string, name: string, email: string) => {
   }
 }
 
+const deleteUser = async (id: string) => {
+  try {
+    const data = await User.destroy({
+      where: {
+        id
+      }
+    });
+    
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 const userService = {
   createUser,
   getUserByUsername,
   getUserByUserId,
   updatePassword,
-  updateProfile,
+  updateUser,
+  deleteUser,
 }
 
 export default userService;
