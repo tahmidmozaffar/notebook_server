@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { User } from "../models/user.model";
-import { ResetPasswordCodes } from "../models/resetpasswordcode.model";
 import sendEmail from "../services/mailer.service";
 import { split } from "../utils";
 import userService from "../services/user.service";
@@ -126,10 +124,9 @@ const resetPassword = async (req: Request, res: Response) => {
 
       // create a random number between 1000 and 9999
       const code = Math.floor(1000 + Math.random() * (9999 - 1000 + 1));
-
+      
       const codeEntry = await resetPasswordCodeService.create(user.id!, code);
-
-      const verificationCode = code.toString() + codeEntry.id!.toString();
+      const verificationCode = `${code}${codeEntry.id!}`;
 
       sendEmail(user.email!, verificationCode);
 
@@ -160,9 +157,7 @@ const updatePassword = async (req: Request, res: Response) => {
   try {
     const [verificationCode, id] = split(code, 4);
 
-    const entry = await ResetPasswordCodes.findOne({
-      where: { id }
-    });
+    const entry = await resetPasswordCodeService.getCodeById(id);
 
     if (!entry || entry.code !== parseInt(verificationCode)) {
       return res.status(401).send({ message: "the verification code is not correct" });
@@ -171,13 +166,8 @@ const updatePassword = async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-    const user = await User.update({
-      password: hashedPassword
-    }, { where: { id: entry.userId } });
-
-    await ResetPasswordCodes.destroy({
-      where: { id }
-    });
+    await userService.updatePassword(entry.userId.toString(), hashedPassword);
+    await resetPasswordCodeService.deleteCode(id);
 
     return res.status(200).send({ message: "Password is reset" })
 
