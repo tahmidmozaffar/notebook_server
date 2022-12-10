@@ -6,6 +6,7 @@ import { ResetPasswordCodes } from "../models/resetpasswordcode.model";
 import sendEmail from "../services/mailer.service";
 import { split } from "../utils";
 import userService from "../services/user.service";
+import resetPasswordCodeService from "../services/resetpasswordcode.service";
 
 const changePassword = async (req: Request, res: Response) => {
 
@@ -119,21 +120,14 @@ const resetPassword = async (req: Request, res: Response) => {
   const email = req.body['email'];
 
   try {
-    const user = await User.findOne({
-      where: { email }
-    });
+    const user = await userService.getUserByEmail(email);
 
     if (user) {
 
       // create a random number between 1000 and 9999
       const code = Math.floor(1000 + Math.random() * (9999 - 1000 + 1));
 
-      const codeEntry = await ResetPasswordCodes.create({
-        userId: user.id!,
-        code: code
-      });
-
-      console.log(codeEntry);
+      const codeEntry = await resetPasswordCodeService.create(user.id!, code);
 
       const verificationCode = code.toString() + codeEntry.id!.toString();
 

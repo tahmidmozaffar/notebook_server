@@ -40,6 +40,17 @@ const getUserByUserId = async (id: string) => {
   }
 }
 
+const getUserByEmail = async (email: string) => {
+  try {
+    const user = await User.findOne({
+      where: { email }
+    });
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
 const updatePassword = async (id: string, hashedPassword: string) => {
   try {
     const data = await User.update({
@@ -72,7 +83,7 @@ const deleteUser = async (id: string) => {
         id
       }
     });
-    
+
     return data;
   } catch (error) {
     throw error;
@@ -83,6 +94,7 @@ const userService = {
   createUser,
   getUserByUsername,
   getUserByUserId,
+  getUserByEmail,
   updatePassword,
   updateUser,
   deleteUser,
