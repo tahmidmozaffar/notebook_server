@@ -1,11 +1,13 @@
-import express, { Express, Request, Response } from 'express';
-import cors from 'cors';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
+import express, { Express } from 'express';
 import morgan from 'morgan';
-import routes from './src/routes';
+import { initializeModels } from './src/models';
+
 import passport from './src/middlewares/passport';
+import routes from './src/routes';
 
 
 const app: Express = express();
@@ -13,8 +15,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan('dev'));
+initializeModels();
 app.use(passport.initialize());
-
 
 const port = process.env.PORT;
 

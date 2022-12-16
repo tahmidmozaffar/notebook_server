@@ -1,6 +1,6 @@
+import bcrypt from 'bcrypt';
 import { Request, Response } from "express";
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
 import userService from "../services/user.service";
 
 const jwt_secret = process.env.JWT_SECRET!;
@@ -13,8 +13,9 @@ const signup = async (req: Request, res: Response) => {
 
   try {
     await userService.createUser(name, username, password, email);
-    return res.status(201).send("User is created successfully");
-
+    res.status(201);
+    res.send("User is created successfully");
+    return res;
   } catch (error) {
     return res.status(500).send({ message: "Something went wrong. Please try again." });
   }

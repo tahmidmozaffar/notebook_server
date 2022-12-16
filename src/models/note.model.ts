@@ -1,5 +1,5 @@
 import { Model, InferAttributes, InferCreationAttributes, DataTypes } from 'sequelize';
-import { sequelize } from '../db';
+import { db } from '../db';
 
 export class Note extends Model<InferAttributes<Note>, InferCreationAttributes<Note>> {
   declare id?: number;
@@ -10,32 +10,38 @@ export class Note extends Model<InferAttributes<Note>, InferCreationAttributes<N
   declare isDeleted?: number;
 };
 
-Note.init({
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,    
-  },
-  title: {
-    allowNull: false,
-    type: DataTypes.STRING,
-  },
-  description: {
-    allowNull: true,
-    type: DataTypes.STRING,
-  },
-  tasks: {
-    allowNull: true,
-    type: DataTypes.JSON,
-  },
-  isDeleted: {
-    type: DataTypes.INTEGER,
-  }  
-}, {
-  tableName: 'notes',
-  sequelize,
-});
+
+
+export const initNoteModel = () => {
+  const sequelize = db.initSequelize();
+
+  Note.init({
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    title: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
+    description: {
+      allowNull: true,
+      type: DataTypes.STRING,
+    },
+    tasks: {
+      allowNull: true,
+      type: DataTypes.JSON,
+    },
+    isDeleted: {
+      type: DataTypes.INTEGER,
+    }
+  }, {
+    tableName: 'notes',
+    sequelize,
+  });
+}
