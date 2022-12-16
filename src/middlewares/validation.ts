@@ -19,6 +19,8 @@ export const confirmPasswordValidation = (req: Request, res: Response, next: () 
       message: "Password does not match"
     });
   }
+  
+  next();
 }
 
 export const emailValidation = (req: Request, res: Response, next: () => void) => {
@@ -33,6 +35,6 @@ export const emailValidation = (req: Request, res: Response, next: () => void) =
   if (!regex.test(email)) {
     return res.status(422).send({ message: "Email is invalid" });
   }
-  
+
   next();
 }
