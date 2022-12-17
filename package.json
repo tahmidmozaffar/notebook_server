@@ -7,7 +7,9 @@
     "build": "rm -rf dist && npx tsc",
     "start": "node dist/index.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
-    "test": "jest --coverage"
+    "clear_coverage_report": "rm -rf coverage",
+    "test": "jest",
+    "test_with_coverage": "yarn clear_coverage_report && jest --coverage"
   },
   "keywords": [],
   "author": "",

@@ -4,8 +4,6 @@ version: 2.1
 orbs:
   codecov: codecov/codecov@3.2.4
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   build:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
@@ -16,18 +14,20 @@ jobs:
       - checkout
       - run: yarn
       - run: yarn build
-      - run: yarn test
-      - codecov/upload 
-  # test:
-  #   docker:
-  #     - image: node:14.18.1
-  #   steps:            
-  #     - run: yarn test
-  # coverage_report:
-  #   docker:
-  #     - image: node:14.18.1
-  #   steps:
-  #     - codecov/upload 
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - .      
+  test:    
+    steps:            
+      - attach_workspace:
+          at: ~/project
+      - run: yarn test_with_coverage
+  coverage_report:    
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - codecov/upload
 
       
 
@@ -37,5 +37,9 @@ workflows:
   test_coverage:
     jobs:
       - build
-      # - test
-      # - coverage_report
+      - test:
+          requires:
+            - build
+      - coverage_report:
+          requires:
+            - test
