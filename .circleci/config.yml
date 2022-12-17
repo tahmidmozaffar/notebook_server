@@ -18,12 +18,14 @@ jobs:
       - persist_to_workspace:
           root: ~/project
           paths:
-            - .      
+            - . 
+
   run_test:
     steps:            
       - attach_workspace:
           at: ~/project
       - run: yarn test_with_coverage
+      
   coverage_report:
     steps:
       - attach_workspace:
