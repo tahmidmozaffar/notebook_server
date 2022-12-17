@@ -10,7 +10,7 @@ describe("Auth controller tests", () => {
   describe("Signup method", () => {
 
     it("when no exception happens, createUser will be called, 201 code and success message will be sent", async () => {
-      const req = mockRequest({});
+      const req = mockRequest({ body: {} });
       const res = mockResponse();
       jest.spyOn(userService, 'createUser').mockResolvedValue({} as User);
 
@@ -22,7 +22,7 @@ describe("Auth controller tests", () => {
     });
 
     it("when excepton happens, 500 code and failure message will be sent", async () => {
-      const req = mockRequest({});
+      const req = mockRequest({ body: {} });
       const res = mockResponse();
       jest.spyOn(userService, 'createUser').mockResolvedValue(Promise.reject());
 
@@ -40,10 +40,12 @@ describe("Auth controller tests", () => {
       const email = "any@email.com";
 
       const req = mockRequest({
-        name,
-        username,
-        password,
-        email,
+        body: {
+          name,
+          username,
+          password,
+          email,
+        }
       });
       const res = mockResponse();
 
@@ -59,7 +61,7 @@ describe("Auth controller tests", () => {
 
   describe("Login method", () => {
     it("when exception happens, 500 code and failure message will be sent", async () => {
-      const req = mockRequest({});
+      const req = mockRequest({ body: {} });
       const res = mockResponse();
       jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(Promise.reject());
 
@@ -71,7 +73,7 @@ describe("Auth controller tests", () => {
 
     it("userservice.getUserByUsername will be called with username from request body", async () => {
 
-      const req = mockRequest({ username: "anyusername" });
+      const req = mockRequest({ body: { username: "anyusername" } });
       const res = mockResponse();
       const spy = jest.spyOn(userService, 'getUserByUsername');
 
@@ -81,7 +83,7 @@ describe("Auth controller tests", () => {
     });
 
     it("when no user exists with the username, 404 code and 'User does not exist' message will be sent", async () => {
-      const req = mockRequest({ username: "anyusername" });
+      const req = mockRequest({ body: { username: "anyusername" } });
       const res = mockResponse();
       jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(null);
 
@@ -92,7 +94,7 @@ describe("Auth controller tests", () => {
     });
 
     it("when called with valid username and password, 200 code and success message with token will be sent", async () => {
-      const req = mockRequest({ username: "validusername", password: "validpassword" });
+      const req = mockRequest({ body: { username: "validusername", password: "validpassword" } });
       const res = mockResponse();
 
       jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(Promise.resolve({} as User));
@@ -106,7 +108,7 @@ describe("Auth controller tests", () => {
     });
 
     it("when called with wrong password, 401 code and failure message will be sent ", async () => {
-      const req = mockRequest({ username: "validusername", password: "validpassword" });
+      const req = mockRequest({ body: { username: "validusername", password: "validpassword" } });
       const res = mockResponse();
 
       jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(Promise.resolve({} as User));
