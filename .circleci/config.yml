@@ -31,5 +31,5 @@ workflows:
   test_coverage:
     jobs:
       - build
-      - test
-      - coverage_report
+      # - test
+      # - coverage_report
