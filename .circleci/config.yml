@@ -9,8 +9,7 @@ jobs:
   build:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    executor:
-      - name: node/default
+    executor: node/default      
     steps:
       - checkout
       - run: yarn
@@ -18,14 +17,14 @@ jobs:
       - persist_to_workspace:
           root: ~/project
           paths:
-            - . 
+            - .
 
   run_test:
     steps:            
       - attach_workspace:
           at: ~/project
       - run: yarn test_with_coverage
-      
+
   coverage_report:
     steps:
       - attach_workspace:
