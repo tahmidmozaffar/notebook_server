@@ -2,13 +2,14 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 orbs:  
+  node: 'circleci/node:4.1'
   codecov: codecov/codecov@3.2.4
 
 jobs:
   build:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    executor: node:14.18.1
+    executor: node/default
     steps:
       - checkout
       - run: yarn
