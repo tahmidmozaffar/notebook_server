@@ -15,6 +15,7 @@ jobs:
       - node/install:
           install-yarn: true
           node-version: 14.18.1
+      - run: yarn
       - run: yarn build
       - persist_to_workspace:
           root: ~/project
