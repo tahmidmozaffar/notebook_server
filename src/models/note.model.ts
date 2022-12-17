@@ -10,8 +10,6 @@ export class Note extends Model<InferAttributes<Note>, InferCreationAttributes<N
   declare isDeleted?: number;
 };
 
-
-
 export const initNoteModel = () => {
   const sequelize = db.initSequelize();
 

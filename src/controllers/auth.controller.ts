@@ -13,9 +13,7 @@ const signup = async (req: Request, res: Response) => {
 
   try {
     await userService.createUser(name, username, password, email);
-    res.status(201);
-    res.send("User is created successfully");
-    return res;
+    return res.status(201).send("User is created successfully");
   } catch (error) {
     return res.status(500).send({ message: "Something went wrong. Please try again." });
   }
