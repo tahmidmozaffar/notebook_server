@@ -36,7 +36,7 @@ jobs:
           at: ~/project
       - run: ls
       - run: pwd
-      - codecov/upload -f
+      - codecov/upload
 
       
 
