@@ -34,8 +34,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
-      - ls
-      - pwd
+      - run: ls
+      - run: pwd
       - codecov/upload -f
 
       
