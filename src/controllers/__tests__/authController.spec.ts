@@ -6,12 +6,15 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 describe("Auth controller tests", () => {
+  let res: any;
+  beforeEach(() => {
+    res = mockResponse();
+  });
 
   describe("Signup method", () => {
 
     it("when no exception happens, createUser will be called, 201 code and success message will be sent", async () => {
       const req = mockRequest({ body: {} });
-      const res = mockResponse();
       jest.spyOn(userService, 'createUser').mockResolvedValue({} as User);
 
       await authControllers.signup(req, res);
@@ -23,7 +26,6 @@ describe("Auth controller tests", () => {
 
     it("when excepton happens, 500 code and failure message will be sent", async () => {
       const req = mockRequest({ body: {} });
-      const res = mockResponse();
       jest.spyOn(userService, 'createUser').mockResolvedValue(Promise.reject());
 
       await authControllers.signup(req, res);
@@ -52,13 +54,12 @@ describe("Auth controller tests", () => {
       const spy = jest.spyOn(userService, "createUser");
       await authControllers.signup(req, res);
       expect(spy).toHaveBeenCalledWith(name, username, password, email);
-    });    
+    });
   });
 
   describe("Login method", () => {
     it("when exception happens, 500 code and failure message will be sent", async () => {
       const req = mockRequest({ body: {} });
-      const res = mockResponse();
       jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(Promise.reject());
 
       await authControllers.login(req, res);
@@ -68,9 +69,7 @@ describe("Auth controller tests", () => {
     });
 
     it("userservice.getUserByUsername will be called with username from request body", async () => {
-
       const req = mockRequest({ body: { username: "anyusername" } });
-      const res = mockResponse();
       const spy = jest.spyOn(userService, 'getUserByUsername');
 
       await authControllers.login(req, res);
@@ -80,7 +79,6 @@ describe("Auth controller tests", () => {
 
     it("when no user exists with the username, 404 code and 'User does not exist' message will be sent", async () => {
       const req = mockRequest({ body: { username: "anyusername" } });
-      const res = mockResponse();
       jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(null);
 
       await authControllers.login(req, res);
@@ -91,8 +89,6 @@ describe("Auth controller tests", () => {
 
     it("when called with valid username and password, 200 code and success message with token will be sent", async () => {
       const req = mockRequest({ body: { username: "validusername", password: "validpassword" } });
-      const res = mockResponse();
-
       jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(Promise.resolve({} as User));
       bcrypt.compare = jest.fn().mockResolvedValue(true);
       jwt.sign = jest.fn().mockReturnValue("generatedtoken");
@@ -105,8 +101,6 @@ describe("Auth controller tests", () => {
 
     it("when called with wrong password, 401 code and failure message will be sent ", async () => {
       const req = mockRequest({ body: { username: "validusername", password: "validpassword" } });
-      const res = mockResponse();
-
       jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(Promise.resolve({} as User));
       bcrypt.compare = jest.fn().mockResolvedValue(false);
 
