@@ -47,12 +47,8 @@ const postNote = async (req: Request, res: Response) => {
 
   try {
     const note = await noteServices.addNote(jwtPayload?.id, title, description, tasksJson);
-
     if (note) {
       return res.status(200).send(note);
-    }
-    else {
-      return res.status(500).send({ message: "Something went wrong. Could not add the note." });
     }
   }
   catch (e) {
