@@ -52,11 +52,7 @@ describe("Auth controller tests", () => {
       const spy = jest.spyOn(userService, "createUser");
       await authControllers.signup(req, res);
       expect(spy).toHaveBeenCalledWith(name, username, password, email);
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
+    });    
   });
 
   describe("Login method", () => {
@@ -121,8 +117,10 @@ describe("Auth controller tests", () => {
 
     });
 
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
+
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 });

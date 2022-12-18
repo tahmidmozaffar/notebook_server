@@ -68,4 +68,8 @@ describe("Note controller tests", () => {
       expect(res.send).toBeCalledWith({ message: "Note is not found" });
     });
   });
-})
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+});
