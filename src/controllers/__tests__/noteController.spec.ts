@@ -36,7 +36,7 @@ describe("Note controller tests", () => {
       const req = mockRequest({ params: { id: "anyid" }, headers: { authorization: "anyjsonwebtoken" } });
       const res = mockResponse();
       jwt.decode = jest.fn().mockReturnValue({ id: "jwtpayload" });
-      jest.spyOn(noteServices, 'getNotes').mockResolvedValue(Promise.reject());
+      jest.spyOn(noteServices, 'getNote').mockResolvedValue(Promise.reject());
 
       await noteControllers.getNote(req, res);
 
