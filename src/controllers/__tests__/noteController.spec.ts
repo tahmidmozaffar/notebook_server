@@ -61,7 +61,7 @@ describe("Note controller tests", () => {
       const res = mockResponse();
       jwt.decode = jest.fn().mockReturnValue({ id: "jwtpayload" });
 
-      jest.spyOn(noteServices, 'getNote').mockResolvedValue(null);
+      jest.spyOn(noteServices, 'getNote').mockResolvedValue(Promise.resolve(null));
 
       await noteControllers.getNote(req, res);
       expect(res.status).toBeCalledWith(404);
