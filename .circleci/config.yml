@@ -38,6 +38,6 @@ workflows:
   test_coverage:
     jobs:
       - build
-      - run_test:
+      - run_test_with_coverage:
           requires:
             - build      
