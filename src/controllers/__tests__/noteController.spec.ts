@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { Note } from '../../models/note.model';
 import noteServices from '../../services/note.service';
 import { mockNote, mockNotes, mockRequest, mockResponse } from '../../test-utils/mockUtils';
 import noteControllers from '../note.controller';

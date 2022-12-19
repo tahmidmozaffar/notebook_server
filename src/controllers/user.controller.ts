@@ -32,7 +32,7 @@ const changePassword = async (req: Request, res: Response) => {
           }
 
           return res.status(200).json({ message: "Password is changed" });
-        } catch (err) {
+        } catch (err) {          
           if (err instanceof Error) {
             return res.status(500).json({ message: `Something went wrong. Please try again later. Exception: ${err.message}` });
           }
@@ -124,7 +124,7 @@ const resetPassword = async (req: Request, res: Response) => {
 
       // create a random number between 1000 and 9999
       const code = Math.floor(1000 + Math.random() * (9999 - 1000 + 1));
-      
+
       const codeEntry = await resetPasswordCodeService.create(user.id!, code);
       const verificationCode = `${code}${codeEntry.id!}`;
 
