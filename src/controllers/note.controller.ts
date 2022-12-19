@@ -82,12 +82,12 @@ const updateNote = async (req: Request, res: Response) => {
 
   try {
     const note = await noteServices.updateNote(jwtPayload?.id, id, title, description, tasksJson);
-
-    if (note?.[0] === 0) {
+    
+    if (!note || note?.[0] === 0) {
       return res.status(500).send({ message: "Something went wrong. Could not update the note." });
     }
     else {
-      return res.status(200).send(note);
+      return res.status(200).send({ message: "Note is successfully updated" });
     }
   } catch (error) {
     if (error instanceof Error) {

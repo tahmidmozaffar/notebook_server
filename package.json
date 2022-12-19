@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc --project tsconfig.build.json",
     "start": "node dist/index.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
+    "dev": "concurrently \"yarn build --watch\" \"nodemon -q dist/index.js\"",
     "clear_coverage_report": "rm -rf coverage",
     "test_with_coverage": "yarn clear_coverage_report && jest"
   },

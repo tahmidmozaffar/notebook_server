@@ -64,9 +64,13 @@ describe("Note controller tests", () => {
   });
 
   describe("postNote method", () => {
-    it("when tasks array not valid, JSONException occurs and 422 code is sent", async () => {
-      const req = mockRequest({ headers: { authorization: "anyjsonwebtoken" }, body: {} });
 
+    let req: any;
+    beforeEach(() => {
+      req = mockRequest({ headers: { authorization: "anyjsonwebtoken" }, body: {} });
+    });
+
+    it("when tasks array not valid, JSONException occurs and 422 code is sent", async () => {
       const error = new Error();
       error.name = "JSONException";
       jest.spyOn(noteServices, 'addNote').mockResolvedValue(Promise.reject(error));
@@ -78,8 +82,6 @@ describe("Note controller tests", () => {
     });
 
     it("when DatabaseException occurs, 500 code and failure message is sent", async () => {
-      const req = mockRequest({ headers: { authorization: "anyjsonwebtoken" }, body: {} });
-
       const error = new Error();
       error.name = "DatabaseException";
       jest.spyOn(noteServices, 'addNote').mockResolvedValue(Promise.reject(error));
@@ -91,7 +93,6 @@ describe("Note controller tests", () => {
     });
 
     it("when any exception other than JSONException or DatabaseException occurs, 500 code and failure message is sent", async () => {
-      const req = mockRequest({ headers: { authorization: "anyjsonwebtoken" }, body: {} });
       jest.spyOn(noteServices, 'addNote').mockResolvedValue(Promise.reject(new Error()));
 
       await noteControllers.postNote(req, res);
@@ -101,7 +102,6 @@ describe("Note controller tests", () => {
     });
 
     it("when successfully note is added, 200 code and created note is sent as response", async () => {
-      const req = mockRequest({ headers: { authorization: "anyjsonwebtoken" }, body: {} });
       jest.spyOn(noteServices, 'addNote').mockResolvedValue(Promise.resolve(mockNote));
 
       await noteControllers.postNote(req, res);
@@ -109,6 +109,130 @@ describe("Note controller tests", () => {
       expect(res.status).toBeCalledWith(200);
       expect(res.send).toBeCalledWith(mockNote);
     });
+  });
+
+  describe("updateNote method", () => {
+    it("when NoteNotFoundException occurs, 404 code and failure message will be sent as response", async () => {
+      const req = mockRequest({
+        params: { id: "anyid" },
+        headers: { authorization: "anyjsonwebtoken" },
+        body: { title: "anytitle", description: "anydescription", tasksJson: {} }
+      });
+      const error = new Error();
+      error.name = "NoteNotFoundException";
+      jest.spyOn(noteServices, 'updateNote').mockResolvedValue(Promise.reject(error));
+
+      await noteControllers.updateNote(req, res);
+
+      expect(res.status).toBeCalledWith(404);
+      expect(res.send).toBeCalledWith({ message: "No note was found using the id" });
+    });
+
+    it("when JSONException occurs, 422 code and failure message will be sent as response", async () => {
+      const req = mockRequest({
+        params: { id: "anyid" },
+        headers: { authorization: "anyjsonwebtoken" },
+        body: { title: "anytitle", description: "anydescription", tasksJson: {} }
+      });
+      const error = new Error();
+      error.name = "JSONException";
+      jest.spyOn(noteServices, 'updateNote').mockResolvedValue(Promise.reject(error));
+
+      await noteControllers.updateNote(req, res);
+
+      expect(res.status).toBeCalledWith(422);
+      expect(res.send).toBeCalledWith({ exception: "InvalidArgumentException", message: "Tasks must be a valid JSON array" });
+    });
+
+    it("when DatabaseException occurs, 500 code and failure message will be sent as response", async () => {
+      const req = mockRequest({
+        params: { id: "anyid" },
+        headers: { authorization: "anyjsonwebtoken" },
+        body: { title: "anytitle", description: "anydescription", tasksJson: {} }
+      });
+      const error = new Error();
+      error.name = "DatabaseException";
+      jest.spyOn(noteServices, 'updateNote').mockResolvedValue(Promise.reject(error));
+
+      await noteControllers.updateNote(req, res);
+
+      expect(res.status).toBeCalledWith(500);
+      expect(res.send).toBeCalledWith({ mesage: "Something went wrong. Could not update the note." });
+    });
+
+    it("when any other exception occurs, 500 code and failure message will be sent as response", async () => {
+      const req = mockRequest({
+        params: { id: "anyid" },
+        headers: { authorization: "anyjsonwebtoken" },
+        body: { title: "anytitle", description: "anydescription", tasksJson: {} }
+      });
+      const error = new Error();
+      jest.spyOn(noteServices, 'updateNote').mockResolvedValue(Promise.reject(error));
+
+      await noteControllers.updateNote(req, res);
+
+      expect(res.status).toBeCalledWith(500);
+      expect(res.send).toBeCalledWith({ message: "Something went wrong." });
+    });
+
+    it("if no info is not given, note will be not updated and 422 code will be sent as response", async () => {
+      const req = mockRequest({
+        params: { id: "anyid" },
+        headers: { authorization: "anyjsonwebtoken" },
+        body: {}
+      });
+
+      await noteControllers.updateNote(req, res);
+
+      expect(res.status).toBeCalledWith(422);
+      expect(res.send).toBeCalledWith({ exception: "InvalidArgumentException", message: "There is nothing to update" });
+    });
+
+    it("it note was not updated, 500 code and failure message will be sent as response", async () => {
+      const req = mockRequest({
+        params: { id: "anyid" },
+        headers: { authorization: "anyjsonwebtoken" },
+        body: { title: "anytitle", description: "anydescription", tasksJson: {} }
+      });
+
+      jest.spyOn(noteServices, 'updateNote').mockResolvedValue(Promise.resolve([0]));
+
+      await noteControllers.updateNote(req, res);
+
+      expect(res.status).toBeCalledWith(500);
+      expect(res.send).toBeCalledWith({ message: "Something went wrong. Could not update the note." });
+    });
+
+    it("it note was not updated undefined, 500 code and failure message will be sent as response", async () => {
+      const req = mockRequest({
+        params: { id: "anyid" },
+        headers: { authorization: "anyjsonwebtoken" },
+        body: { title: "anytitle", description: "anydescription", tasksJson: {} }
+      });
+
+      jest.spyOn(noteServices, 'updateNote').mockResolvedValue(Promise.resolve(undefined));
+
+      await noteControllers.updateNote(req, res);
+
+      expect(res.status).toBeCalledWith(500);
+      expect(res.send).toBeCalledWith({ message: "Something went wrong. Could not update the note." });
+    });
+
+    it("if note was updated successfully, 200 code and updated note will be sent as response", async () => {
+      const req = mockRequest({
+        params: { id: "anyid" },
+        headers: { authorization: "anyjsonwebtoken" },
+        body: { title: "anytitle", description: "anydescription", tasksJson: {} }
+      });
+
+      jest.spyOn(noteServices, 'updateNote').mockResolvedValue(Promise.resolve([1]));
+
+      await noteControllers.updateNote(req, res);
+
+      expect(res.status).toBeCalledWith(200);
+      expect(res.send).toBeCalledWith({ message: "Note is successfully updated" });
+    });
+
   });
 
   afterEach(() => {
