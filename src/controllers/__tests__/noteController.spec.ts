@@ -246,8 +246,44 @@ describe("Note controller tests", () => {
       expect(res.status).toBeCalledWith(200);
       expect(res.send).toBeCalledWith({ message: "Note is successfully deleted." });
     });
+  });
 
+  describe("undoDeleteNote method", () => {
+    let req: any;
+    beforeEach(() => {
+      req = mockRequest({
+        params: { id: "anyid" },
+        headers: { authorization: "anyjsonwebtoken" },
+      });
+    });
 
+    it("when exception occurs, 500 code and failure message will be sent as response", async () => {
+
+      jest.spyOn(noteServices, "undoDeleteNote").mockResolvedValue(Promise.reject());
+
+      await noteControllers.undoDeleteNote(req, res);
+
+      expect(res.status).toBeCalledWith(500);
+      expect(res.send).toBeCalledWith({ message: "Something went wrong. Could not restore the note." });
+    });
+
+    it("when affected row count is zero, 401 code and failure message will be sent as response", async () => {
+      jest.spyOn(noteServices, "undoDeleteNote").mockResolvedValue(Promise.resolve([0]));
+
+      await noteControllers.undoDeleteNote(req, res);
+
+      expect(res.status).toBeCalledWith(401);
+      expect(res.send).toBeCalledWith({ message: "Note is not found" });
+    });
+
+    it("when note is successfully deleted, 200 code and success message will be sent as response", async () => {
+      jest.spyOn(noteServices, "undoDeleteNote").mockResolvedValue(Promise.resolve([1]));
+
+      await noteControllers.undoDeleteNote(req, res);
+
+      expect(res.status).toBeCalledWith(200);
+      expect(res.send).toBeCalledWith({ message: "Note is successfully restored." });
+    });
   });
 
   afterEach(() => {

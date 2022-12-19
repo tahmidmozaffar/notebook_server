@@ -140,7 +140,7 @@ const undoDeleteNote = async (req: Request, res: Response) => {
 
     return res.status(200).send({ message: "Note is successfully restored." });
   } catch (error) {
-    res.status(500).send({ message: "Something went wrong. Could not restore the note." })
+    res.status(500).send({ message: "Something went wrong. Could not restore the note." });
   }
 
 }
