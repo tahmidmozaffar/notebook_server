@@ -32,7 +32,7 @@ const changePassword = async (req: Request, res: Response) => {
           }
 
           return res.status(200).json({ message: "Password is changed" });
-        } catch (err) {          
+        } catch (err) {
           if (err instanceof Error) {
             return res.status(500).json({ message: `Something went wrong. Please try again later. Exception: ${err.message}` });
           }
@@ -69,20 +69,18 @@ const updateProfile = async (req: Request, res: Response) => {
     const user = await userService.getUserByUserId(jwtPayload?.id);
 
     if (user) {
-      if (name || email) {
-        const data = await userService.updateUser(jwtPayload?.id, name ?? user.name, email ?? user.email)
-
-        if (data[0] === 0) {
-          return res.status(404).send({ message: "Something went wrong. Could not update the profile information" });
-        }
-
-        return res.status(200).send({ message: "Profile is updated" });
+      if (!name && !email) {
+        return res.status(422).send({exception: "InvalidArgumentException", message: "Nothing to update" });
       }
-      else {
-        return res.status(200).send({ message: "Nothing to update" });
+
+      const data = await userService.updateUser(jwtPayload?.id, name ?? user.name, email ?? user.email)
+
+      if (data[0] === 0) {
+        return res.status(404).send({ message: "Something went wrong. Could not update the profile information" });
       }
+
+      return res.status(200).send({ message: "Profile is updated" });
     }
-
   } catch (error) {
     if (error instanceof Error) {
       console.log(error.message);
