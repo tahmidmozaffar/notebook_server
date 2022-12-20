@@ -21,7 +21,6 @@ const getNote = async (req: Request, res: Response) => {
   const token = req.headers.authorization!.split(" ")[1];
   const jwtPayload = jwt.decode(token, { json: true });
 
-
   try {
     const note = await noteServices.getNote(jwtPayload?.id, id);
 

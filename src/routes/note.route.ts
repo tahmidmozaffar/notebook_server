@@ -11,15 +11,4 @@ router.put('/:id', passport.authenticate('jwt', { session: false }), noteControl
 router.delete('/:id', passport.authenticate('jwt', { session: false }), noteControllers.deleteNote)
 router.put('/restore/:id', passport.authenticate('jwt', { session: false }), noteControllers.undoDeleteNote)
 
-
-// router.use((req, res, next) => {
-
-//   const token = req.headers.authorization!.split(" ")[1];
-// })
-
-// const tokenChecker = (req, res, next) => {
-//   const token = req.headers.authorization!.split(" ")[1];
-  
-// }
-
 export default router;
