@@ -83,7 +83,7 @@ describe("User controller tests", () => {
 
   describe("updateProfile method", () => {
     let req: any
-    beforeEach(() => {      
+    beforeEach(() => {
       req = mockRequest({ headers: { authorization: "anyjsonwebtoken" }, body: { email: "new@email.com" } });
     });
 
@@ -106,7 +106,7 @@ describe("User controller tests", () => {
       expect(res.send).toBeCalledWith({ exception: "InvalidArgumentException", message: "Nothing to update" });
     });
 
-    it("when userService updateUser throws exception, 500 code and failure message will be sent as response", async () => {      
+    it("when userService updateUser throws exception, 500 code and failure message will be sent as response", async () => {
       jest.spyOn(userService, 'getUserByUserId').mockResolvedValue(Promise.resolve({} as User));
       jest.spyOn(userService, 'updateUser').mockResolvedValue(Promise.reject());
 
@@ -116,7 +116,7 @@ describe("User controller tests", () => {
       expect(res.send).toBeCalledWith({ message: "Could not complete the request" });
     });
 
-    it("when userService updateUser return zero affected row, 404 code will be sent as response", async () => {    
+    it("when userService updateUser return zero affected row, 404 code will be sent as response", async () => {
       jest.spyOn(userService, 'getUserByUserId').mockResolvedValue(Promise.resolve({} as User));
       jest.spyOn(userService, 'updateUser').mockResolvedValue(Promise.resolve([0]));
 
@@ -126,7 +126,7 @@ describe("User controller tests", () => {
       expect(res.send).toBeCalledWith({ message: "Something went wrong. Could not update the profile information" });
     });
 
-    it("when userService updateUser successfully update user info, 200 code will be sent as response", async () => {      
+    it("when userService updateUser successfully update user info, 200 code will be sent as response", async () => {
       jest.spyOn(userService, 'getUserByUserId').mockResolvedValue(Promise.resolve({} as User));
       jest.spyOn(userService, 'updateUser').mockResolvedValue(Promise.resolve([1]));
 
@@ -136,5 +136,42 @@ describe("User controller tests", () => {
       expect(res.send).toBeCalledWith({ message: "Profile is updated" });
     });
   });
+
+
+  describe("deleteProfile method", () => {
+    let req: any
+    beforeEach(() => {
+      req = mockRequest({ headers: { authorization: "anyjsonwebtoken" }, body: { email: "new@email.com" } });
+    });
+
+    it("when exception occurs, 500 code and failure message will be sent as response", async () => {
+      jest.spyOn(userService, 'deleteUser').mockResolvedValue(Promise.reject());
+
+      await userControllers.deleteProfile(req, res);
+
+      expect(res.status).toBeCalledWith(500);
+      expect(res.send).toBeCalledWith({ message: "Something went wrong. Could not complete the request." });
+    });
+
+    it("when userService deleteUser returns zero, 404 code and failure message will be sent as response", async () => {
+      jest.spyOn(userService, 'deleteUser').mockResolvedValue(Promise.resolve(0));
+
+      await userControllers.deleteProfile(req, res);
+
+      expect(res.status).toBeCalledWith(404);
+      expect(res.send).toBeCalledWith({ message: "Something went wrong. Could not find the user." });
+    });
+
+    it("when userService successfully deletes the user, 200 code will be sent as response", async () => {
+      jest.spyOn(userService, 'deleteUser').mockResolvedValue(Promise.resolve(1));
+
+      await userControllers.deleteProfile(req, res);
+
+      expect(res.status).toBeCalledWith(200);
+      expect(res.send).toBeCalledWith({ message: "User account is deleted", devMessage: "Redirect user to login page" });
+    });
+  });
+
+  
 
 });
