@@ -172,6 +172,24 @@ describe("User controller tests", () => {
     });
   });
 
-  
+  describe("resetPassword method", () => {
+    let req: any
+    beforeEach(() => {
+      req = mockRequest({ body: { email: "any@email.com" } });
+    });
+
+    it("when userService getUserByEmail throws exception, 500 code and failure message will be sent", async () => {
+      jest.spyOn(userService, 'getUserByEmail').mockResolvedValue(Promise.reject());
+
+      await userControllers.resetPassword(req, res);
+
+      expect(res.status).toBeCalledWith(500);
+      expect(res.send).toBeCalledWith({ message: "Could not complete the request. Please try again later." });
+    });
+    
+    // TODO: add other tests for this method
+  });
+
+  // TODO: add tests for update password
 
 });
