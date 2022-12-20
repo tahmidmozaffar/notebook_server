@@ -15,11 +15,9 @@ export const confirmPasswordValidation = (req: Request, res: Response, next: () 
   const confirmPassword = req.body['confirmPassword'];
 
   if (newPassword !== confirmPassword) {
-    return res.status(422).send({
-      message: "Password does not match"
-    });
+    return res.status(422).send({ message: "Password does not match" });
   }
-  
+
   next();
 }
 
