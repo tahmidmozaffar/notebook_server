@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import jwt from 'jsonwebtoken';
-import noteServices from "../services/note.service";
+import noteService from "../services/note.service";
 
 const getNotes = async (req: Request, res: Response) => {
 
@@ -8,7 +8,7 @@ const getNotes = async (req: Request, res: Response) => {
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
-    const notes = await noteServices.getNotes(jwtPayload?.id);
+    const notes = await noteService.getNotes(jwtPayload?.id);
     return res.status(200).send(notes);
   } catch (error) {
     return res.status(500).send({ message: "Something went wrong. Could not retrive notes" });
@@ -22,7 +22,7 @@ const getNote = async (req: Request, res: Response) => {
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
-    const note = await noteServices.getNote(jwtPayload?.id, id);
+    const note = await noteService.getNote(jwtPayload?.id, id);
 
     if (note) {
       return res.status(200).send(note);
@@ -45,7 +45,7 @@ const postNote = async (req: Request, res: Response) => {
   const tasksJson = req.body['tasks'];
 
   try {
-    const note = await noteServices.addNote(jwtPayload?.id, title, description, tasksJson);
+    const note = await noteService.addNote(jwtPayload?.id, title, description, tasksJson);
     if (note) {
       return res.status(200).send(note);
     }
@@ -80,7 +80,7 @@ const updateNote = async (req: Request, res: Response) => {
   }
 
   try {
-    const note = await noteServices.updateNote(jwtPayload?.id, id, title, description, tasksJson);
+    const note = await noteService.updateNote(jwtPayload?.id, id, title, description, tasksJson);
 
     if (!note || note?.[0] === 0) {
       return res.status(500).send({ message: "Something went wrong. Could not update the note." });
@@ -112,7 +112,7 @@ const deleteNote = async (req: Request, res: Response) => {
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
-    const data = await noteServices.deleteNote(jwtPayload?.id, id);
+    const data = await noteService.deleteNote(jwtPayload?.id, id);
 
     if (data[0] === 0) {
       return res.status(401).send({ message: "Note is not found" });
@@ -131,7 +131,7 @@ const undoDeleteNote = async (req: Request, res: Response) => {
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
-    const data = await noteServices.undoDeleteNote(jwtPayload?.id, id);
+    const data = await noteService.undoDeleteNote(jwtPayload?.id, id);
 
     if (data[0] === 0) {
       return res.status(401).send({ message: "Note is not found" });

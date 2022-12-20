@@ -1,7 +1,6 @@
 import { Note } from "../models/note.model"
 
 const getNotes = async (userId: string) => {
-
   try {
     const notes = await Note.findAll({
       where: {
@@ -11,7 +10,7 @@ const getNotes = async (userId: string) => {
     return notes;
   }
   catch (error) {
-    // TODO: log error
+    // TODO: log error  
     throw error;
   }
 }
@@ -144,7 +143,7 @@ const undoDeleteNote = async (userId: string, id: string) => {
   }
 }
 
-const noteServices = {
+const noteService = {
   getNotes,
   getNote,
   addNote,
@@ -153,4 +152,4 @@ const noteServices = {
   undoDeleteNote,
 }
 
-export default noteServices;
+export default noteService;
