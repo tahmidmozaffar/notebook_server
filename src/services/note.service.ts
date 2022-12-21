@@ -56,7 +56,6 @@ const addNote = async (userId: number, title: string, description: string, tasks
     }
     throw e;
   }
-
 }
 
 const updateNote = async (userId: string, id: string, title: string, description: string, tasksJson: string) => {

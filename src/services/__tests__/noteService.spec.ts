@@ -3,6 +3,10 @@ import { mockNote, mockNotes } from "../../test-utils/mockUtils";
 import noteService from "../note.service";
 
 describe("Note service tests", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("getNotes method", () => {
     it("when database call is successful, return notes array", async () => {
       const spy = jest.spyOn(Note, 'findAll');
@@ -10,6 +14,7 @@ describe("Note service tests", () => {
       const notes = await noteService.getNotes("userid");
       expect(notes).toEqual(mockNotes);
       expect(spy).toBeCalledWith({ where: { userId: "userid" } });
+      expect(spy).toBeCalledTimes(1);
     });
 
     it("when database call is falied, it throws exception", async () => {
@@ -24,6 +29,7 @@ describe("Note service tests", () => {
       }
       expect(notes).not.toBe(mockNotes);
       expect(spy).toBeCalledWith({ where: { userId: "userid" } });
+      expect(spy).toBeCalledTimes(1);
     });
   });
 
@@ -48,15 +54,93 @@ describe("Note service tests", () => {
       }
       expect(note).not.toBe(mockNote);
       expect(spy).toBeCalledWith({ where: { userId: "userid", id: "id" } });
+      expect(spy).toBeCalledTimes(1);
     });
   });
 
   describe("addNote method", () => {
-    // TODO
+    it("when input for tasks is not a valid json, it throws JSONException", async () => {
+      try {
+        await noteService.addNote(12, "anytitle", "anydescription", "invalidJson");
+      } catch (error) {
+        expect((error as Error).name).toBe("JSONException");
+      }
+    });
+
+    it("when it failed to create note, it throws DatabaseException", async () => {
+      const spy = jest.spyOn(Note, 'create');
+      spy.mockResolvedValue(Promise.reject(new Error()));
+      try {
+        await noteService.addNote(12, "anytitle", "anydescription", '[{"title":"anytitle"}]');
+      } catch (error) {
+        expect((error as Error).name).toBe("DatabaseException");
+      }
+    });
+
+    it("when note is successfully created, it returns the created note", async () => {
+      const spy = jest.spyOn(Note, 'create');
+      spy.mockResolvedValue(Promise.resolve(mockNote));
+
+      const note = await noteService.addNote(12, mockNote.title, mockNote.description, "{}");
+      expect(note).toBe(mockNote);
+      expect(spy).toBeCalledWith({ title: mockNote.title, userId: 12, description: mockNote.description, tasks: {}, isDeleted: 0 });
+      expect(spy).toBeCalledTimes(1);
+    });
   });
 
   describe("updateNote method", () => {
-    // TODO
+    it("when note cannot be found, NoteNotFoundException exception is thrown", async () => {
+      jest.spyOn(Note, 'findOne').mockResolvedValue(Promise.resolve(null));
+
+      try {
+        await noteService.updateNote("userid", "id", "title", "description", "{}");
+      }
+      catch (error) {
+        expect((error as Error).name).toBe("NoteNotFoundException");
+      }
+    });
+
+    it("when it is faield to retrieve note, it throws DatabaseException", async () => {
+      jest.spyOn(Note, 'findOne').mockResolvedValue(Promise.reject());
+      try {
+        await noteService.updateNote("userid", "id", "title", "description", "{}");
+      }
+      catch (error) {
+        expect((error as Error).name).toBe("DatabaseException");
+      }
+    });
+
+    it("when tasks is not a valid json, JSONException is thrown", async () => {
+      jest.spyOn(Note, 'findOne').mockResolvedValue(Promise.resolve(mockNote));
+
+      try {
+        await noteService.updateNote("userid", "id", "title", "description", "invalidjson");
+      }
+      catch (error) {
+        expect((error as Error).name).toBe("JSONException");
+      }
+    });
+
+    it("when note update is successful, it returns the affected row count", async () => {
+      jest.spyOn(Note, 'findOne').mockResolvedValue(Promise.resolve(mockNote));
+      jest.spyOn(Note, 'update').mockResolvedValue(Promise.resolve([1]));
+
+      const data = await noteService.updateNote("userid", "id", "title", "description", "{}");
+      expect(data).toEqual([1]);
+    });
+
+    it("when exception happens on update, it throws DatabaseException", async () => {
+      jest.spyOn(Note, 'findOne').mockResolvedValue(Promise.resolve(mockNote));
+      jest.spyOn(Note, 'update').mockResolvedValue(Promise.reject());
+
+      try {
+        await noteService.updateNote("userid", "id", "title", "description", "{}");
+      }
+      catch (error) {
+        expect((error as Error).name).toBe("DatabaseException");
+      }
+    });
+
   });
 
   describe("deleteNote method", () => {

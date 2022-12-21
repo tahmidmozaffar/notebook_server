@@ -41,7 +41,7 @@ export const mockNotes: Note[] = [
   } as Note
 ];
 
-export const mockNote: Note = {
+export const mockNote: Note = {  
   title: "anytitle 1",
-  description: "anydescription 1"
+  description: "anydescription 1",  
 } as Note;
