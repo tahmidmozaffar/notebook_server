@@ -14,7 +14,7 @@ export class Note extends Model<
   declare userId: number;
   declare title: string;
   declare description: string;
-  declare tasks?: Object[];
+  declare tasks?: object[];
   declare isDeleted?: number;
 }
 

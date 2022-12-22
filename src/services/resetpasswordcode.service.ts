@@ -4,7 +4,7 @@ const create = async (id: number, code: number) => {
   try {
     const codeEntry = await ResetPasswordCodes.create({
       userId: id,
-      code: code,
+      code
     });
     return codeEntry;
   } catch (error) {
@@ -29,7 +29,7 @@ const deleteCode = async (id: string) => {
       where: { id },
     });
 
-    if (count == 0) {
+    if (count === 0) {
       throw new Error("No code is deleted");
     }
   } catch (error) {

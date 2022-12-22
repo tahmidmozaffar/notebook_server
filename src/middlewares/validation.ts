@@ -38,6 +38,7 @@ export const emailValidation = (
     return res.status(422).send({ message: "Email is required" });
   }
 
+  // eslint-disable-next-line no-useless-escape
   const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!regex.test(email)) {
     return res.status(422).send({ message: "Email is invalid" });

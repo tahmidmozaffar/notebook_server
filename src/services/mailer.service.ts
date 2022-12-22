@@ -17,7 +17,7 @@ export const sendEmail = (toEmail: string, verificationCode: string) => {
     text: "The verification code is " + verificationCode,
   };
 
-  mailSender.sendMail(mailData, (error, info) => {
+  mailSender.sendMail(mailData, (error) => {
     if (error) {
       console.log(error.message);
     }
