@@ -1,3 +1,4 @@
 describe("Mailer service tests", () => {
-  // TODO
+  it("test", ()=>{    
+  });
 });

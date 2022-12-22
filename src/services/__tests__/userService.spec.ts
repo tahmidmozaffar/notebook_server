@@ -1,3 +1,4 @@
 describe("User service tests", () => {
-  // TODO
+  it("test", () => {
+  });
 });
