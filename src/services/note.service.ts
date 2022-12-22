@@ -1,27 +1,26 @@
-import { Note } from "../models/note.model"
+import { Note } from "../models/note.model";
 
 const getNotes = async (userId: string) => {
   try {
     const notes = await Note.findAll({
       where: {
-        userId
-      }
+        userId,
+      },
     });
     return notes;
-  }
-  catch (error) {
-    // TODO: log error  
+  } catch (error) {
+    // TODO: log error
     throw error;
   }
-}
+};
 
 const getNote = async (userId: string, id: string) => {
   try {
     const note = await Note.findOne({
       where: {
         userId,
-        id
-      }
+        id,
+      },
     });
 
     return note;
@@ -29,9 +28,14 @@ const getNote = async (userId: string, id: string) => {
     // TODO: log error
     throw error;
   }
-}
+};
 
-const addNote = async (userId: number, title: string, description: string, tasksJson: string) => {
+const addNote = async (
+  userId: number,
+  title: string,
+  description: string,
+  tasksJson: string
+) => {
   let tasks;
   try {
     if (tasksJson != null) {
@@ -46,7 +50,11 @@ const addNote = async (userId: number, title: string, description: string, tasks
 
   try {
     const note = await Note.create({
-      title, userId, description, tasks, isDeleted: 0
+      title,
+      userId,
+      description,
+      tasks,
+      isDeleted: 0,
     });
 
     return note;
@@ -56,30 +64,34 @@ const addNote = async (userId: number, title: string, description: string, tasks
     }
     throw e;
   }
-}
+};
 
-const updateNote = async (userId: string, id: string, title: string, description: string, tasksJson: string) => {
-
+const updateNote = async (
+  userId: string,
+  id: string,
+  title: string,
+  description: string,
+  tasksJson: string
+) => {
   let existingData;
   try {
     const data = await Note.findOne({
       where: {
         userId,
-        id
-      }
+        id,
+      },
     });
     if (data) {
       existingData = data;
-    }
-    else {
+    } else {
       const error = new Error();
-      error.name = "NoteNotFoundException"
+      error.name = "NoteNotFoundException";
       throw error;
     }
   } catch (error) {
     if (error instanceof Error) {
       if (!error.name) {
-        error.name = "DatabaseException"
+        error.name = "DatabaseException";
       }
       throw error;
     }
@@ -97,50 +109,60 @@ const updateNote = async (userId: string, id: string, title: string, description
     throw error;
   }
 
-  const updatedTitle = title || existingData?.['title'];
-  const updatedDescription = description || existingData?.['description'];
+  const updatedTitle = title || existingData?.["title"];
+  const updatedDescription = description || existingData?.["description"];
 
   try {
-    const note = await Note.update({
-      title: updatedTitle, description: updatedDescription, tasks
-    }, { where: { id } });
+    const note = await Note.update(
+      {
+        title: updatedTitle,
+        description: updatedDescription,
+        tasks,
+      },
+      { where: { id } }
+    );
     return note;
   } catch (error) {
     if (error instanceof Error) {
-      error.name = "DatabaseException"
+      error.name = "DatabaseException";
       throw error;
     }
   }
-}
+};
 
 const deleteNote = async (userId: string, id: string) => {
   try {
-    const data = await Note.update({ isDeleted: 1 }, {
-      where: {
-        userId, id
+    const data = await Note.update(
+      { isDeleted: 1 },
+      {
+        where: {
+          userId,
+          id,
+        },
       }
-    });
+    );
     return data;
-
   } catch (error) {
     throw error;
   }
-}
+};
 
 const undoDeleteNote = async (userId: string, id: string) => {
-
   try {
-    const data = await Note.update({ isDeleted: 0 }, {
-      where: {
-        userId, id
+    const data = await Note.update(
+      { isDeleted: 0 },
+      {
+        where: {
+          userId,
+          id,
+        },
       }
-    });
+    );
     return data;
-
   } catch (error) {
     throw error;
   }
-}
+};
 
 const noteService = {
   getNotes,
@@ -149,6 +171,6 @@ const noteService = {
   updateNote,
   deleteNote,
   undoDeleteNote,
-}
+};
 
 export default noteService;

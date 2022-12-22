@@ -1,24 +1,29 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import { User } from "../models/user.model";
 
-const createUser = async (name: string, username: string, password: string, email: string) => {
-
+const createUser = async (
+  name: string,
+  username: string,
+  password: string,
+  email: string
+) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
   try {
     const user = await User.create({
-      name, username, password: hashedPassword, email
+      name,
+      username,
+      password: hashedPassword,
+      email,
     });
     return user;
-  }
-  catch (error) {
+  } catch (error) {
     throw error;
   }
-}
+};
 
 const getUserByUsername = async (username: string) => {
-
   try {
     const user = await User.findOne({ where: { username } });
     return user;
@@ -28,8 +33,7 @@ const getUserByUsername = async (username: string) => {
     }
     throw error;
   }
-
-}
+};
 
 const getUserByUserId = async (id: string) => {
   try {
@@ -38,57 +42,63 @@ const getUserByUserId = async (id: string) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 const getUserByEmail = async (email: string) => {
   try {
     const user = await User.findOne({
-      where: { email }
+      where: { email },
     });
     return user;
   } catch (error) {
     throw error;
   }
-}
+};
 
 const updatePassword = async (id: string, hashedPassword: string) => {
   try {
-    const data = await User.update({
-      password: hashedPassword,
-    }, { where: { id } });
+    const data = await User.update(
+      {
+        password: hashedPassword,
+      },
+      { where: { id } }
+    );
 
     return data;
   } catch (error) {
     throw error;
   }
-}
+};
 
 const updateUser = async (id: string, name: string, email: string) => {
   try {
-    const data = await User.update({
-      name,
-      email
-    }, { where: { id } });
+    const data = await User.update(
+      {
+        name,
+        email,
+      },
+      { where: { id } }
+    );
 
     return data;
   } catch (error) {
     throw error;
   }
-}
+};
 
 const deleteUser = async (id: string) => {
   try {
     const data = await User.destroy({
       where: {
-        id
-      }
+        id,
+      },
     });
 
     return data;
   } catch (error) {
     throw error;
   }
-}
+};
 
 const userService = {
   createUser,
@@ -98,6 +108,6 @@ const userService = {
   updatePassword,
   updateUser,
   deleteUser,
-}
+};
 
 export default userService;

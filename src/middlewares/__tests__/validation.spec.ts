@@ -1,5 +1,9 @@
 import { mockRequest, mockResponse } from "../../test-utils/mockUtils";
-import { confirmPasswordValidation, emailValidation, fieldValidation } from "../validation";
+import {
+  confirmPasswordValidation,
+  emailValidation,
+  fieldValidation,
+} from "../validation";
 
 describe("validation middleware tests", () => {
   let res: any;
@@ -12,7 +16,7 @@ describe("validation middleware tests", () => {
 
   describe("fieldValidation method", () => {
     it("when email is given, next method will be called", () => {
-      const func = fieldValidation('email');
+      const func = fieldValidation("email");
       const req = mockRequest({ body: { email: "any@email.com" } });
 
       func(req, res, nextSpy);
@@ -23,7 +27,7 @@ describe("validation middleware tests", () => {
     });
 
     it("when email is not given, next method will not be called", () => {
-      const func = fieldValidation('email');
+      const func = fieldValidation("email");
       const req = mockRequest({ body: {} });
 
       func(req, res, nextSpy);
@@ -36,17 +40,23 @@ describe("validation middleware tests", () => {
 
   describe("confirmPasswordValidation method", () => {
     it("when new password and confirm password are same, next method will be called", () => {
-      const req = mockRequest({ body: { newPassword: "password", confirmPassword: "password" } });
+      const req = mockRequest({
+        body: { newPassword: "password", confirmPassword: "password" },
+      });
 
       confirmPasswordValidation(req, res, nextSpy);
 
       expect(res.status).not.toBeCalledWith(422);
-      expect(res.send).not.toBeCalledWith({ message: "Password does not match" });
+      expect(res.send).not.toBeCalledWith({
+        message: "Password does not match",
+      });
       expect(nextSpy).toBeCalledTimes(1);
     });
 
     it("when new password and confirm password are different, next method will not be called", () => {
-      const req = mockRequest({ body: { newPassword: "password", confirmPassword: "otherpassword" } });
+      const req = mockRequest({
+        body: { newPassword: "password", confirmPassword: "otherpassword" },
+      });
 
       confirmPasswordValidation(req, res, nextSpy);
 
@@ -68,14 +78,9 @@ describe("validation middleware tests", () => {
     });
 
     it("when email is valid, next method will be called", () => {
+      const emails = ["any@email.com", "12asd@email.com", "asdasd12@email.com"];
 
-      const emails = [
-        'any@email.com',
-        '12asd@email.com',
-        'asdasd12@email.com',
-      ];
-
-      emails.forEach(email => {
+      emails.forEach((email) => {
         const req = mockRequest({ body: { email } });
 
         emailValidation(req, res, nextSpy);
@@ -86,21 +91,19 @@ describe("validation middleware tests", () => {
 
         jest.clearAllMocks();
       });
-
     });
 
     it("when email is invalid, next method will not be called", () => {
-
       const emails = [
-        'any @email.com',
-        '12asd@email. com',
-        'asdasd12@ email.com',
-        'invalid.com',
-        'any@emailcom',
-        'any@email.',
+        "any @email.com",
+        "12asd@email. com",
+        "asdasd12@ email.com",
+        "invalid.com",
+        "any@emailcom",
+        "any@email.",
       ];
 
-      emails.forEach(email => {
+      emails.forEach((email) => {
         const req = mockRequest({ body: { email } });
 
         emailValidation(req, res, nextSpy);

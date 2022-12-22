@@ -1,26 +1,42 @@
-import express from 'express';
-import passport from 'passport';
-import userControllers from '../controllers/user.controller';
-import { fieldValidation, confirmPasswordValidation, emailValidation } from '../middlewares/validation';
+import express from "express";
+import passport from "passport";
+import userControllers from "../controllers/user.controller";
+import {
+  fieldValidation,
+  confirmPasswordValidation,
+  emailValidation,
+} from "../middlewares/validation";
 
 const router = express.Router();
 
-router.post('/resetpassword', emailValidation, userControllers.resetPassword);
-router.put('/resetpassword', 
-  fieldValidation('newPassword'),
-  fieldValidation('confirmPassword'), 
+router.post("/resetpassword", emailValidation, userControllers.resetPassword);
+router.put(
+  "/resetpassword",
+  fieldValidation("newPassword"),
+  fieldValidation("confirmPassword"),
   confirmPasswordValidation,
-  userControllers.updatePassword);
+  userControllers.updatePassword
+);
 
-
-router.post('/changepassword', passport.authenticate('jwt', { session: false }),
-  fieldValidation('currentPassword'),
-  fieldValidation('newPassword'),
-  fieldValidation('confirmPassword'),
+router.post(
+  "/changepassword",
+  passport.authenticate("jwt", { session: false }),
+  fieldValidation("currentPassword"),
+  fieldValidation("newPassword"),
+  fieldValidation("confirmPassword"),
   confirmPasswordValidation,
-  userControllers.changePassword);
+  userControllers.changePassword
+);
 
-router.put('/', passport.authenticate('jwt', { session: false }), userControllers.updateProfile);
-router.delete('/', passport.authenticate('jwt', { session: false }), userControllers.deleteProfile);
+router.put(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  userControllers.updateProfile
+);
+router.delete(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  userControllers.deleteProfile
+);
 
 export default router;

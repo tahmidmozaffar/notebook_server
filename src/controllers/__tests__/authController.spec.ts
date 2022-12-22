@@ -2,8 +2,8 @@ import { User } from "../../models/user.model";
 import userService from "../../services/user.service";
 import { mockRequest, mockResponse } from "../../test-utils/mockUtils";
 import authControllers from "../auth.controller";
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 describe("Auth controller tests", () => {
   let res: any;
@@ -12,10 +12,9 @@ describe("Auth controller tests", () => {
   });
 
   describe("Signup method", () => {
-
     it("when no exception happens, createUser will be called, 201 code and success message will be sent", async () => {
       const req = mockRequest({ body: {} });
-      jest.spyOn(userService, 'createUser').mockResolvedValue({} as User);
+      jest.spyOn(userService, "createUser").mockResolvedValue({} as User);
 
       await authControllers.signup(req, res);
 
@@ -26,13 +25,15 @@ describe("Auth controller tests", () => {
 
     it("when excepton happens, 500 code and failure message will be sent", async () => {
       const req = mockRequest({ body: {} });
-      jest.spyOn(userService, 'createUser').mockResolvedValue(Promise.reject());
+      jest.spyOn(userService, "createUser").mockResolvedValue(Promise.reject());
 
       await authControllers.signup(req, res);
       expect(userService.createUser).toBeCalledTimes(1);
       expect(res.status).not.toBeCalledWith(201);
       expect(res.status).toBeCalledWith(500);
-      expect(res.send).toBeCalledWith({ message: "Something went wrong. Please try again." });
+      expect(res.send).toBeCalledWith({
+        message: "Something went wrong. Please try again.",
+      });
     });
 
     it("createUser of userService will be call with body parameter", async () => {
@@ -47,7 +48,7 @@ describe("Auth controller tests", () => {
           username,
           password,
           email,
-        }
+        },
       });
       const res = mockResponse();
 
@@ -60,17 +61,21 @@ describe("Auth controller tests", () => {
   describe("Login method", () => {
     it("when exception happens, 500 code and failure message will be sent", async () => {
       const req = mockRequest({ body: {} });
-      jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(Promise.reject());
+      jest
+        .spyOn(userService, "getUserByUsername")
+        .mockResolvedValue(Promise.reject());
 
       await authControllers.login(req, res);
 
       expect(res.status).toBeCalledWith(500);
-      expect(res.json).toBeCalledWith({ message: "Something went wrong. Try again later" });
+      expect(res.json).toBeCalledWith({
+        message: "Something went wrong. Try again later",
+      });
     });
 
     it("userservice.getUserByUsername will be called with username from request body", async () => {
       const req = mockRequest({ body: { username: "anyusername" } });
-      const spy = jest.spyOn(userService, 'getUserByUsername');
+      const spy = jest.spyOn(userService, "getUserByUsername");
 
       await authControllers.login(req, res);
 
@@ -79,7 +84,7 @@ describe("Auth controller tests", () => {
 
     it("when no user exists with the username, 404 code and 'User does not exist' message will be sent", async () => {
       const req = mockRequest({ body: { username: "anyusername" } });
-      jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(null);
+      jest.spyOn(userService, "getUserByUsername").mockResolvedValue(null);
 
       await authControllers.login(req, res);
 
@@ -88,30 +93,38 @@ describe("Auth controller tests", () => {
     });
 
     it("when called with valid username and password, 200 code and success message with token will be sent", async () => {
-      const req = mockRequest({ body: { username: "validusername", password: "validpassword" } });
-      jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(Promise.resolve({} as User));
+      const req = mockRequest({
+        body: { username: "validusername", password: "validpassword" },
+      });
+      jest
+        .spyOn(userService, "getUserByUsername")
+        .mockResolvedValue(Promise.resolve({} as User));
       bcrypt.compare = jest.fn().mockResolvedValue(true);
       jwt.sign = jest.fn().mockReturnValue("generatedtoken");
 
       await authControllers.login(req, res);
 
       expect(res.status).toBeCalledWith(200);
-      expect(res.json).toBeCalledWith({ message: "Successfully logged in", token: "generatedtoken" });
+      expect(res.json).toBeCalledWith({
+        message: "Successfully logged in",
+        token: "generatedtoken",
+      });
     });
 
     it("when called with wrong password, 401 code and failure message will be sent ", async () => {
-      const req = mockRequest({ body: { username: "validusername", password: "validpassword" } });
-      jest.spyOn(userService, 'getUserByUsername').mockResolvedValue(Promise.resolve({} as User));
+      const req = mockRequest({
+        body: { username: "validusername", password: "validpassword" },
+      });
+      jest
+        .spyOn(userService, "getUserByUsername")
+        .mockResolvedValue(Promise.resolve({} as User));
       bcrypt.compare = jest.fn().mockResolvedValue(false);
 
       await authControllers.login(req, res);
 
       expect(res.status).toBeCalledWith(401);
       expect(res.json).toBeCalledWith({ message: "Password is incorrect" });
-
     });
-
-
   });
 
   afterEach(() => {

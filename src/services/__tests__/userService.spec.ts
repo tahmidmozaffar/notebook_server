@@ -1,4 +1,3 @@
 describe("User service tests", () => {
-  it("test", () => {
-  });
+  it("test", () => {});
 });

@@ -5,6 +5,5 @@ import { initResetPasswordCodesModel } from "./resetpasswordcode.model";
 export const initializeModels = () => {
   initNoteModel();
   initResetPasswordCodesModel();
-  initUserModel();  
+  initUserModel();
 };
-

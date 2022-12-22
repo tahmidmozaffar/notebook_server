@@ -1,4 +1,3 @@
 describe("Mailer service tests", () => {
-  it("test", ()=>{    
-  });
+  it("test", () => {});
 });
