@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import userService from "../services/user.service";
 
-const jwt_secret = process.env.JWT_SECRET!;
+const jwt_secret = process.env.JWT_SECRET ?? "";
 
 const signup = async (req: Request, res: Response) => {
   const name = req.body["name"];

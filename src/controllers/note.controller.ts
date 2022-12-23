@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import noteService from "../services/note.service";
 
 const getNotes = async (req: Request, res: Response) => {
-  const token = req.headers.authorization!.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1] ?? "";
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
@@ -18,7 +18,7 @@ const getNotes = async (req: Request, res: Response) => {
 
 const getNote = async (req: Request, res: Response) => {
   const id = req.params["id"];
-  const token = req.headers.authorization!.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1] ?? "";
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
@@ -37,7 +37,7 @@ const getNote = async (req: Request, res: Response) => {
 };
 
 const postNote = async (req: Request, res: Response) => {
-  const token = req.headers.authorization!.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1] ?? "";
   const jwtPayload = jwt.decode(token, { json: true });
 
   const title = req.body["title"];
@@ -76,7 +76,7 @@ const postNote = async (req: Request, res: Response) => {
 
 const updateNote = async (req: Request, res: Response) => {
   const id = req.params["id"];
-  const token = req.headers.authorization!.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1] ?? "";
   const jwtPayload = jwt.decode(token, { json: true });
 
   const title = req.body["title"];
@@ -132,7 +132,7 @@ const updateNote = async (req: Request, res: Response) => {
 
 const deleteNote = async (req: Request, res: Response) => {
   const id = req.params["id"];
-  const token = req.headers.authorization!.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1] ?? "";
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
@@ -152,7 +152,7 @@ const deleteNote = async (req: Request, res: Response) => {
 
 const undoDeleteNote = async (req: Request, res: Response) => {
   const id = req.params["id"];
-  const token = req.headers.authorization!.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1] ?? "";
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {

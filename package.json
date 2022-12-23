@@ -11,7 +11,7 @@
     "test": "jest --collectCoverage=false",
     "test_with_coverage": "yarn clear_coverage_report && jest",
     "format": "prettier --write --loglevel error \"src/**/*.ts\"",
-    "lint": "eslint \"src/**/*.ts\" --quiet"
+    "lint": "eslint \"src/**/*.ts\""
   },
   "keywords": [],
   "author": "",

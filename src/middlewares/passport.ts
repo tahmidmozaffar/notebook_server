@@ -12,7 +12,7 @@ passport.use(
     userService
       .getUserByUserId(jwtPayload.id)
       .then((user) => {
-        return done(null, user!);
+        return done(null, user ?? false);
       })
       .catch((err) => {
         console.log("error " + err.message);

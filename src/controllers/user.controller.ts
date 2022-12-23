@@ -10,7 +10,7 @@ const changePassword = async (req: Request, res: Response) => {
   const currentPassword = req.body["currentPassword"];
   const newPassword = req.body["newPassword"];
 
-  const token = req.headers.authorization!.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1] ?? "";
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
@@ -64,7 +64,7 @@ const updateProfile = async (req: Request, res: Response) => {
   const name = req.body["name"];
   const email = req.body["email"];
 
-  const token = req.headers.authorization!.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1] ?? "";
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
@@ -102,7 +102,7 @@ const updateProfile = async (req: Request, res: Response) => {
 };
 
 const deleteProfile = async (req: Request, res: Response) => {
-  const token = req.headers.authorization!.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1] ?? "";
   const jwtPayload = jwt.decode(token, { json: true });
 
   try {
@@ -134,14 +134,18 @@ const resetPassword = async (req: Request, res: Response) => {
   try {
     const user = await userService.getUserByEmail(email);
 
-    if (user) {
+    if (user && user.id && user.email) {
       // create a random number between 1000 and 9999
       const code = Math.floor(1000 + Math.random() * (9999 - 1000 + 1));
 
-      const codeEntry = await resetPasswordCodeService.create(user.id!, code);
-      const verificationCode = `${code}${codeEntry.id!}`;
+      const codeEntry = await resetPasswordCodeService.create(user.id, code);
+      if (!codeEntry.id) {
+        throw new Error("Could not create reset password code");
+      }
 
-      sendEmail(user.email!, verificationCode);
+      const verificationCode = `${code}${codeEntry.id}`;
+
+      sendEmail(user.email, verificationCode);
 
       return res
         .status(200)
