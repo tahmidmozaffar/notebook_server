@@ -16,7 +16,7 @@ export class User extends Model<
   declare name: string;
   declare username: string;
   declare password: string;
-  declare email?: string;
+  declare email: string;
 }
 
 export const initUserModel = () => {
@@ -44,6 +44,7 @@ export const initUserModel = () => {
       },
       email: {
         type: DataTypes.STRING,
+        allowNull: false,
         unique: true,
       },
     },

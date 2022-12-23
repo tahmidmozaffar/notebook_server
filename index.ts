@@ -5,10 +5,8 @@ dotenv.config();
 import express, { Express } from 'express';
 import morgan from 'morgan';
 import { initializeModels } from './src/models';
-
 import passport from './src/middlewares/passport';
 import routes from './src/routes';
-
 
 const app: Express = express();
 app.use(bodyParser.json());
