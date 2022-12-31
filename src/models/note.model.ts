@@ -12,6 +12,7 @@ export class Note extends Model<
 > {
   declare id?: number;
   declare userId: number;
+  declare folderId: number;
   declare title: string;
   declare description: string;
   declare tasks?: object[];
@@ -29,6 +30,10 @@ export const initNoteModel = () => {
         primaryKey: true,
       },
       userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      folderId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },

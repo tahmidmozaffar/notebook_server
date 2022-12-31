@@ -5,6 +5,7 @@ import {
   DataTypes,
 } from "sequelize";
 import { db } from "../db";
+import { Folder } from "./folder.model";
 import { Note } from "./note.model";
 import { ResetPasswordCodes } from "./resetpasswordcode.model";
 
@@ -71,6 +72,17 @@ export const initUserModel = () => {
     onUpdate: "CASCADE",
   });
   ResetPasswordCodes.belongsTo(User, {
+    foreignKey: "userId",
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  });
+
+  User.hasMany(Folder, {
+    foreignKey: "userId",
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  });
+  Folder.belongsTo(User, {
     foreignKey: "userId",
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
