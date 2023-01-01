@@ -6,7 +6,10 @@ import {
 } from "sequelize";
 import { db } from "../db";
 
-export class Folder extends Model<InferAttributes<Folder>, InferCreationAttributes<Folder>> {
+export class Folder extends Model<
+  InferAttributes<Folder>,
+  InferCreationAttributes<Folder>
+> {
   declare id?: number;
   declare userId: number;
   declare name: string;
@@ -32,8 +35,8 @@ export const initFolderModel = () => {
       },
     },
     {
-      tableName: 'folders',
-      sequelize
+      tableName: "folders",
+      sequelize,
     }
   );
-}
+};

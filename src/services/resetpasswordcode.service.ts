@@ -4,7 +4,7 @@ const create = async (id: number, code: number) => {
   try {
     const codeEntry = await ResetPasswordCodes.create({
       userId: id,
-      code
+      code,
     });
     return codeEntry;
   } catch (error) {

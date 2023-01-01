@@ -40,6 +40,7 @@ const postNote = async (req: Request, res: Response) => {
   const token = req.headers.authorization?.split(" ")[1] ?? "";
   const jwtPayload = jwt.decode(token, { json: true });
 
+  const folderId = req.body["folderId"];
   const title = req.body["title"];
   const description = req.body["description"];
   const tasksJson = req.body["tasks"];
@@ -47,6 +48,7 @@ const postNote = async (req: Request, res: Response) => {
   try {
     const note = await noteService.addNote(
       jwtPayload?.id,
+      folderId,
       title,
       description,
       tasksJson

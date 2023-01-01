@@ -32,6 +32,7 @@ const getNote = async (userId: string, id: string) => {
 
 const addNote = async (
   userId: number,
+  folderId: number,
   title: string,
   description: string,
   tasksJson: string
@@ -51,6 +52,7 @@ const addNote = async (
   try {
     const note = await Note.create({
       title,
+      folderId,
       userId,
       description,
       tasks,
