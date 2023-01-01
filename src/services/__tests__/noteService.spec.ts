@@ -63,6 +63,7 @@ describe("Note service tests", () => {
       try {
         await noteService.addNote(
           12,
+          123,
           "anytitle",
           "anydescription",
           "invalidJson"
@@ -78,6 +79,7 @@ describe("Note service tests", () => {
       try {
         await noteService.addNote(
           12,
+          123,
           "anytitle",
           "anydescription",
           '[{"title":"anytitle"}]'
@@ -93,6 +95,7 @@ describe("Note service tests", () => {
 
       const note = await noteService.addNote(
         12,
+        123,
         mockNote.title,
         mockNote.description,
         "{}"
@@ -101,6 +104,7 @@ describe("Note service tests", () => {
       expect(spy).toBeCalledWith({
         title: mockNote.title,
         userId: 12,
+        folderId: 123,
         description: mockNote.description,
         tasks: {},
         isDeleted: 0,
