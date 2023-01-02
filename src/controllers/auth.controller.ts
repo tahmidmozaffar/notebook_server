@@ -13,7 +13,7 @@ const signup = async (req: Request, res: Response) => {
 
   try {
     await userService.createUser(name, username, password, email);
-    return res.status(201).send("User is created successfully");
+    return res.status(201).send({message: "User is created successfully"});
   } catch (error) {
     return res
       .status(500)

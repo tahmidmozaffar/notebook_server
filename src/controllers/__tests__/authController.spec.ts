@@ -20,7 +20,7 @@ describe("Auth controller tests", () => {
 
       expect(userService.createUser).toBeCalledTimes(1);
       expect(res.status).toBeCalledWith(201);
-      expect(res.send).toBeCalledWith("User is created successfully");
+      expect(res.send).toBeCalledWith({message: "User is created successfully"});
     });
 
     it("when excepton happens, 500 code and failure message will be sent", async () => {
