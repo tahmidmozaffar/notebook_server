@@ -43,7 +43,6 @@ const postNote = async (req: Request, res: Response) => {
   const folderId = req.body["folderId"];
   const title = req.body["title"];
   const description = req.body["description"];
-  const tasksJson = req.body["tasks"];
 
   try {
     const note = await noteService.addNote(
@@ -51,20 +50,15 @@ const postNote = async (req: Request, res: Response) => {
       folderId,
       title,
       description,
-      tasksJson
     );
     if (note) {
       return res.status(200).send(note);
     }
   } catch (e) {
+    console.log(e);
     if (e instanceof Error) {
       if (e.name) {
         switch (e.name) {
-          case "JSONException":
-            return res.status(422).send({
-              exception: "InvalidArgumentException",
-              message: "Tasks must be a valid JSON array",
-            });
           case "DatabaseException":
             return res.status(500).send({
               mesage: "Something went wrong. Could not add the note.",
@@ -83,9 +77,8 @@ const updateNote = async (req: Request, res: Response) => {
 
   const title = req.body["title"];
   const description = req.body["description"];
-  const tasksJson = req.body["tasks"];
 
-  if (!title && !description && !tasksJson) {
+  if (!title && !description) {
     return res.status(422).send({
       exception: "InvalidArgumentException",
       message: "There is nothing to update",
@@ -97,8 +90,7 @@ const updateNote = async (req: Request, res: Response) => {
       jwtPayload?.id,
       id,
       title,
-      description,
-      tasksJson
+      description
     );
 
     if (!note || note?.[0] === 0) {
@@ -115,12 +107,7 @@ const updateNote = async (req: Request, res: Response) => {
           case "NoteNotFoundException":
             return res
               .status(404)
-              .send({ message: "No note was found using the id" });
-          case "JSONException":
-            return res.status(422).send({
-              exception: "InvalidArgumentException",
-              message: "Tasks must be a valid JSON array",
-            });
+              .send({ message: "No note was found using the id" });          
           case "DatabaseException":
             return res.status(500).send({
               mesage: "Something went wrong. Could not update the note.",

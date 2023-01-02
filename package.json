@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rm -rf dist && tsc --project tsconfig.build.json",
-    "start": "node dist/index.js",
+    "start": "nodemon dist/index.js",
     "dev": "yarn build && nodemon -q dist/index.js",    
     "clear_coverage_report": "rm -rf coverage",
     "test": "jest --collectCoverage=false",

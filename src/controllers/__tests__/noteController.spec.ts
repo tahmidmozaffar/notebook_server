@@ -97,23 +97,7 @@ describe("Note controller tests", () => {
         headers: { authorization: "anyjsonwebtoken" },
         body: {},
       });
-    });
-
-    it("when tasks array not valid, JSONException occurs and 422 code is sent", async () => {
-      const error = new Error();
-      error.name = "JSONException";
-      jest
-        .spyOn(noteServices, "addNote")
-        .mockResolvedValue(Promise.reject(error));
-
-      await noteControllers.postNote(req, res);
-
-      expect(res.status).toBeCalledWith(422);
-      expect(res.send).toBeCalledWith({
-        exception: "InvalidArgumentException",
-        message: "Tasks must be a valid JSON array",
-      });
-    });
+    });    
 
     it("when DatabaseException occurs, 500 code and failure message is sent", async () => {
       const error = new Error();
@@ -162,8 +146,7 @@ describe("Note controller tests", () => {
         headers: { authorization: "anyjsonwebtoken" },
         body: {
           title: "anytitle",
-          description: "anydescription",
-          tasksJson: {},
+          description: "anydescription",          
         },
       });
     });
@@ -181,23 +164,7 @@ describe("Note controller tests", () => {
       expect(res.send).toBeCalledWith({
         message: "No note was found using the id",
       });
-    });
-
-    it("when JSONException occurs, 422 code and failure message will be sent as response", async () => {
-      const error = new Error();
-      error.name = "JSONException";
-      jest
-        .spyOn(noteServices, "updateNote")
-        .mockResolvedValue(Promise.reject(error));
-
-      await noteControllers.updateNote(req, res);
-
-      expect(res.status).toBeCalledWith(422);
-      expect(res.send).toBeCalledWith({
-        exception: "InvalidArgumentException",
-        message: "Tasks must be a valid JSON array",
-      });
-    });
+    });    
 
     it("when DatabaseException occurs, 500 code and failure message will be sent as response", async () => {
       const error = new Error();

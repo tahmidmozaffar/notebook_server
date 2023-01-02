@@ -13,11 +13,22 @@
 
 npx sequelize-cli db:migrate --name file_name.js --env development --config "src/config/db_config.json"  --migrations-path "src/migrations" --models-path "src/models"
 
+npx sequelize-cli db:migrate --name 20221101081043-create-users.js --env development --config "src/config/db_config.json"  --migrations-path "src/migrations" --models-path "src/models"
+
+npx sequelize-cli db:migrate --name create-folders.js --env development --config "src/config/db_config.json"  --migrations-path "src/migrations" --models-path "src/models"
+
+npx sequelize-cli db:migrate --name 20221101081613-create-notes.js --env development --config "src/config/db_config.json"  --migrations-path "src/migrations" --models-path "src/models"
+
+npx sequelize-cli db:migrate --name 20221121074107-create-reset-password-code.js --env development --config "src/config/db_config.json"  --migrations-path "src/migrations" --models-path "src/models"
+
+
+
 <br>
 
 **Revert one migraion:**
 
 npx sequelize-cli db:migrate:undo --name file_name.js --env development --config "src/config/db_config.json"  --migrations-path "src/migrations"
+npx sequelize-cli db:migrate:undo --name 20221101081613-create-notes.js --env development --config "src/config/db_config.json"  --migrations-path "src/migrations"
 
 <br>
 

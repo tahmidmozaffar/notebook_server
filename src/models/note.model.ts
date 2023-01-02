@@ -15,7 +15,6 @@ export class Note extends Model<
   declare folderId: number;
   declare title: string;
   declare description: string;
-  declare tasks?: object[];
   declare isDeleted?: number;
 }
 
@@ -44,11 +43,7 @@ export const initNoteModel = () => {
       description: {
         allowNull: true,
         type: DataTypes.STRING,
-      },
-      tasks: {
-        allowNull: true,
-        type: DataTypes.JSON,
-      },
+      },      
       isDeleted: {
         type: DataTypes.INTEGER,
       },

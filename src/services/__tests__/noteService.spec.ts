@@ -59,20 +59,6 @@ describe("Note service tests", () => {
   });
 
   describe("addNote method", () => {
-    it("when input for tasks is not a valid json, it throws JSONException", async () => {
-      try {
-        await noteService.addNote(
-          12,
-          123,
-          "anytitle",
-          "anydescription",
-          "invalidJson"
-        );
-      } catch (error) {
-        expect((error as Error).name).toBe("JSONException");
-      }
-    });
-
     it("when it failed to create note, it throws DatabaseException", async () => {
       const spy = jest.spyOn(Note, "create");
       spy.mockResolvedValue(Promise.reject(new Error()));
@@ -81,8 +67,7 @@ describe("Note service tests", () => {
           12,
           123,
           "anytitle",
-          "anydescription",
-          '[{"title":"anytitle"}]'
+          "anydescription"          
         );
       } catch (error) {
         expect((error as Error).name).toBe("DatabaseException");
@@ -97,16 +82,14 @@ describe("Note service tests", () => {
         12,
         123,
         mockNote.title,
-        mockNote.description,
-        "{}"
+        mockNote.description,      
       );
       expect(note).toBe(mockNote);
       expect(spy).toBeCalledWith({
         title: mockNote.title,
         userId: 12,
         folderId: 123,
-        description: mockNote.description,
-        tasks: {},
+        description: mockNote.description,        
         isDeleted: 0,
       });
       expect(spy).toBeCalledTimes(1);
@@ -122,8 +105,7 @@ describe("Note service tests", () => {
           "userid",
           "id",
           "title",
-          "description",
-          "{}"
+          "description"          
         );
       } catch (error) {
         expect((error as Error).name).toBe("NoteNotFoundException");
@@ -137,27 +119,10 @@ describe("Note service tests", () => {
           "userid",
           "id",
           "title",
-          "description",
-          "{}"
+          "description"
         );
       } catch (error) {
         expect((error as Error).name).toBe("DatabaseException");
-      }
-    });
-
-    it("when tasks is not a valid json, JSONException is thrown", async () => {
-      jest.spyOn(Note, "findOne").mockResolvedValue(Promise.resolve(mockNote));
-
-      try {
-        await noteService.updateNote(
-          "userid",
-          "id",
-          "title",
-          "description",
-          "invalidjson"
-        );
-      } catch (error) {
-        expect((error as Error).name).toBe("JSONException");
       }
     });
 
@@ -169,8 +134,7 @@ describe("Note service tests", () => {
         "userid",
         "id",
         "title",
-        "description",
-        "{}"
+        "description"
       );
       expect(data).toEqual([1]);
     });
@@ -184,8 +148,7 @@ describe("Note service tests", () => {
           "userid",
           "id",
           "title",
-          "description",
-          "{}"
+          "description"          
         );
       } catch (error) {
         expect((error as Error).name).toBe("DatabaseException");

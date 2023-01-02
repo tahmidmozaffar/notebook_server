@@ -34,28 +34,15 @@ const addNote = async (
   userId: number,
   folderId: number,
   title: string,
-  description: string,
-  tasksJson: string
+  description: string  
 ) => {
-  let tasks;
-  try {
-    if (tasksJson != null) {
-      tasks = JSON.parse(tasksJson);
-    }
-  } catch (e) {
-    if (e instanceof Error) {
-      e.name = "JSONException";
-    }
-    throw e;
-  }
 
   try {
     const note = await Note.create({
       title,
       folderId,
       userId,
-      description,
-      tasks,
+      description,      
       isDeleted: 0,
     });
 
@@ -72,8 +59,7 @@ const updateNote = async (
   userId: string,
   id: string,
   title: string,
-  description: string,
-  tasksJson: string
+  description: string,  
 ) => {
   let existingData;
   try {
@@ -99,18 +85,6 @@ const updateNote = async (
     }
   }
 
-  let tasks;
-  try {
-    if (tasksJson != null) {
-      tasks = JSON.parse(tasksJson);
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      error.name = "JSONException";
-    }
-    throw error;
-  }
-
   const updatedTitle = title || existingData?.["title"];
   const updatedDescription = description || existingData?.["description"];
 
@@ -118,8 +92,7 @@ const updateNote = async (
     const note = await Note.update(
       {
         title: updatedTitle,
-        description: updatedDescription,
-        tasks,
+        description: updatedDescription,        
       },
       { where: { id } }
     );
